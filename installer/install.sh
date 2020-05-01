@@ -1,79 +1,74 @@
 #!/bin/sh
 
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-BLUE='\033[1;34m'
-SET='\033[0m'
-
-echo "${YELLOW}Select the Farm Jenny hardware to install:${SET}"
-echo "${YELLOW}1: LTE Border Router HAT${SET}"
-echo "${YELLOW}2: Other${SET}"
+echo "Select the Farm Jenny hardware to install:"
+echo "1: LTE Border Router HAT"
+echo "2: Other"
 
 read hardware
 case $hardware in
-    1)    echo "${YELLOW}You selected LTE Border Router HAT${SET}";;
-    2)    echo "${YELLOW}You selected Other${SET}";;
-    *)    echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
+    1)    echo "You selected LTE Border Router HAT";;
+    2)    echo "You selected Other";;
+    *)    echo "Sorry, I don't understand. Bye!"; exit 1;
 esac
 
 if [ $hardware -eq 1 ];	then
-	echo "${YELLOW}What cellular modem is installed in the HAT?:${SET}"
-	echo "${YELLOW}1: Nimbelink NL-SW-LTE-QBG96 (Quectel BG96)${SET}"
-	echo "${YELLOW}2: Other modem${SET}"
-	echo "${YELLOW}3: None${SET}"
+	echo "What cellular modem is installed in the HAT?:"
+	echo "1: Nimbelink NL-SW-LTE-QBG96 (Quectel BG96)"
+	echo "2: Other modem"
+	echo "3: None"
 	
 	read modem
 	case $modem in
-		1)    echo "${YELLOW}You selected Nimbelink NL-SW-LTE-QBG96, configuring for LTE-M with 2G Fallback${SET}"
+		1)    echo "You selected Nimbelink NL-SW-LTE-QBG96, configuring for LTE-M with 2G Fallback"
 				EXTRA='';;
-		2)    echo "${YELLOW}You selected Other modem, no extended settings to apply.${SET}"
+		2)    echo "You selected Other modem, no extended settings to apply."
 				EXTRA='';;
-		3)    echo "${YELLOW}You indicated no cellular modem installed, skipping modem config -- rerun this installer if a modem is added later.${SET}"
+		3)    echo "You indicated no cellular modem installed, skipping modem config -- rerun this installer if a modem is added later."
 				EXTRA='';;
-		*) 	  echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
+		*) 	  echo "Sorry, I don't understand. Bye!"; exit 1;
 	esac
 fi
 
-echo "${YELLOW}Downloading chatscript templates${SET}"
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny -O chat-connect
+echo "Downloading chatscript templates"
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/installer/chat-connect -O chat-connect
 
 if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
+    echo "Download failed"
     exit 1; 
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/sixfab/Sixfab_PPP_Installer/master/ppp_installer/chat-disconnect -O chat-disconnect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/installer/chat-disconnect -O chat-disconnect
 
 if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
+    echo "Download failed"
     exit 1;
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/sixfab/Sixfab_PPP_Installer/master/ppp_installer/provider -O provider
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/installer/provider -O provider
 
 if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
+    echo "Download failed"
     exit 1;
 fi
-echo "${YELLOW}Installing PPP${SET}"
+echo "Installing PPP"
 apt-get install ppp
 
-echo "${YELLOW}What is your carrier APN?${SET}"
+echo "What is your carrier's or MVNO's APN? (e.g., hologram)"
 read carrierapn 
 
 while [ 1 ]
 do
-	echo "${YELLOW}Does your carrier need username and password? [Y/n]${SET}"
+	echo "Does your carrier need username and password? [Y/n]"
 	read usernpass
 	
 	case $usernpass in
 		[Yy]* )  while [ 1 ] 
         do 
         
-        echo "${YELLOW}Enter username${SET}"
+        echo "Enter username"
         read username
 
-        echo "${YELLOW}Enter password${SET}"
+        echo "Enter password"
         read password
         sed -i "s/noauth/#noauth\nuser \"$username\"\npassword \"$password\"/" provider
         break 
@@ -82,12 +77,12 @@ do
         break;;
 		
 		[Nn]* )  break;;
-		*)  echo "${RED}Wrong Selection, Select among Y or n${SET}";;
+		*)  echo "Please select one of: Y, y, N, or n";;
 	esac
 done
 
-echo "${YELLOW}What is your device communication PORT? (ttyS0/ttyUSB3/etc.)${SET}"
-read devicename 
+echo "What is your device communication PORT? (typically: ttyUSB3)"
+read devicepath 
 
 mkdir -p /etc/chatscripts
 sed -i "/#EXTRA/d" chat-connect
@@ -97,7 +92,7 @@ mv chat-disconnect /etc/chatscripts/
 
 mkdir -p /etc/ppp/peers
 sed -i "s/#APN/$carrierapn/" provider
-sed -i "s/#DEVICE/$devicename/" provider
+sed -i "s/#DEVICE/$devicepath/" provider
 mv provider /etc/ppp/peers/provider
 
 if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
