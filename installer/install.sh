@@ -29,6 +29,19 @@ if [ $hardware -eq 1 ];	then
 	esac
 fi
 
+if [ $hardware -eq 1 ];	then
+	echo "Installing Farm Jenny Libraries"
+	case $modem in
+		1)    echo "Installing Farm Jenny Libraries for HAT with BG96-based modem"
+				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git
+				cd Farm_Jenny_Installer
+				sudo python3 setup.py install
+		2)    echo "No libraries to install."
+		3)    echo "No libraries to install."
+		*) 	  echo "Sorry, I don't understand. Bye!"; exit 1;
+	esac
+fi
+
 echo "Downloading chatscript templates"
 wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/chat-connect -O chat-connect
 
