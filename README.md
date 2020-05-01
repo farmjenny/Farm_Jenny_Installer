@@ -3,7 +3,7 @@ This script will install the required utilities and configure your Linux Single 
 ## Instructions
 1.  Download the installer:
 
-    wget https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/install.sh
+    wget --backups=1 https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/install.sh
 
 2.  Change the permissions on the script to make it executable
 
