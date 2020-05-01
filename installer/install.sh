@@ -36,9 +36,10 @@ if [ $hardware -eq 1 ];	then
 				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git
 				cd Farm_Jenny_Installer
 				sudo python3 setup.py install
-		2)    echo "No libraries to install."
-		3)    echo "No libraries to install."
-		*) 	  echo "Sorry, I don't understand. Bye!"; exit 1;
+				;;
+		2)    echo "No libraries to install.";;
+		3)    echo "No libraries to install.";;
+		*)    echo "Sorry, I don't understand. Bye!"; exit 1;
 	esac
 fi
 
