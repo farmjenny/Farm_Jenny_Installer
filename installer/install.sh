@@ -30,21 +30,21 @@ if [ $hardware -eq 1 ];	then
 fi
 
 echo "Downloading chatscript templates"
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/installer/chat-connect -O chat-connect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/chat-connect -O chat-connect
 
 if [ $? -ne 0 ]; then
     echo "Download failed"
     exit 1; 
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/installer/chat-disconnect -O chat-disconnect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/chat-disconnect -O chat-disconnect
 
 if [ $? -ne 0 ]; then
     echo "Download failed"
     exit 1;
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/installer/provider -O provider
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/provider -O provider
 
 if [ $? -ne 0 ]; then
     echo "Download failed"
