@@ -114,5 +114,29 @@ if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
     echo "sudo route add default ppp0" >> /etc/ppp/ip-up
 fi
 
-read -p "Press ENTER key to reboot" ENTER
+if [ $hardware -eq 1 ];	then
+	echo "Your HAT can operate as a Thread Border Router.  Install OTBR? [Y/n]"
+	read otbrinstall
+	
+	case $otbrinstall in
+		[Yy]* )  while [ 1 ] 
+        do 
+        echo "downloading OTBR"
+        sudo git clone https://github.com/openthread/ot-br-posix
+		cd ot-br-posix
+		echo "installing OTBR dependencies"
+		sudo ./script/bootstrap
+		echo "Building OTBR without Access Point"
+		sudo NETWORK_MANAGER=0 ./script/setup
+		echo "TODO: configure path to RCP and GPIO for INT and RESET"
+        done
+
+        break;;
+		
+		[Nn]* )  break;;
+		*)  echo "Please select one of: Y, y, N, or n";;
+	esac
+fi
+
+read -p "Farm Jenny installation is complete, press ENTER key to reboot and start your device" ENTER
 reboot
