@@ -119,8 +119,7 @@ if [ $hardware -eq 1 ];	then
 	read otbrinstall
 	
 	case $otbrinstall in
-		[Yy]* )  while [ 1 ] 
-        do 
+		[Yy]* )
         echo "downloading OTBR"
         sudo git clone https://github.com/openthread/ot-br-posix
 		cd ot-br-posix
@@ -129,8 +128,6 @@ if [ $hardware -eq 1 ];	then
 		echo "Building OTBR without Access Point"
 		sudo NETWORK_MANAGER=0 ./script/setup
 		echo "TODO: configure path to RCP and GPIO for INT and RESET"
-        done
-
         break;;
 		
 		[Nn]* )  break;;
