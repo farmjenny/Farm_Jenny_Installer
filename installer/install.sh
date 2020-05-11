@@ -65,7 +65,7 @@ if [ $? -ne 0 ]; then
     exit 1;
 fi
 echo "Installing PPP"
-apt-get install ppp
+sudo apt-get --assume-yes install ppp
 
 echo "What is your carrier's or MVNO's APN? (e.g., hologram)"
 read carrierapn 
@@ -120,7 +120,9 @@ if [ $hardware -eq 1 ];	then
 	
 	case $otbrinstall in
 		[Yy]* )
-        echo "downloading OTBR"
+        echo "Installing git"
+        sudo apt-get --assume-yes install git
+	echo "downloading OTBR"
         sudo git clone https://github.com/openthread/ot-br-posix
 		cd ot-br-posix
 		echo "installing OTBR dependencies"
