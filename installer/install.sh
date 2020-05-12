@@ -120,15 +120,22 @@ if [ $hardware -eq 1 ];	then
 	
 	case $otbrinstall in
 		[Yy]* )
-        echo "Installing git"
-        sudo apt-get --assume-yes install git
-	echo "downloading OTBR"
-        sudo git clone https://github.com/openthread/ot-br-posix
+        	echo "Installing git"
+        	sudo apt-get --assume-yes install git
+		echo "downloading OTBR"
+        	sudo git clone https://github.com/openthread/ot-br-posix
 		cd ot-br-posix
 		echo "installing OTBR dependencies"
 		sudo ./script/bootstrap
 		echo "Building OTBR without Access Point"
 		sudo NETWORK_MANAGER=0 ./script/setup
+		echo "Finished installing OTBR."
+		echo "Need OT Posix App for RCP"
+		echo "downloading OT"
+		sudo git clone https://github.com/openthread/openthread
+		cd openthread
+		sudo ./bootstrap
+		sudo make -f src/posix/Makefile-posix
 		echo "TODO: configure path to RCP and GPIO for INT and RESET"
         break;;
 		
