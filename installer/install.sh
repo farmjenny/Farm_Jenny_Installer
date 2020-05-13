@@ -132,11 +132,14 @@ if [ $hardware -eq 1 ];	then
 		echo "Finished installing OTBR."
 		echo "Need OT Posix App for RCP"
 		echo "downloading OT"
-		sudo git clone https://github.com/openthread/openthread
+		sudo git clone <https://github.com/openthread/openthread>
 		cd openthread
 		sudo ./bootstrap
+		sudo make -f src/posix/Makefile-posix clean
 		sudo make -f src/posix/Makefile-posix
+		echo "TODO: copy the resulting binary to the right location (the one specified in the RCP path below)"
 		echo "TODO: configure path to RCP and GPIO for INT and RESET"
+		echo "TODO: configure gpio pins for file access"
         break;;
 		
 		[Nn]* )  break;;
