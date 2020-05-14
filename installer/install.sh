@@ -115,7 +115,7 @@ if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
 fi
 
 if [ $hardware -eq 1 ];	then
-	echo "Your HAT can operate as a Thread Border Router.  Install OTBR? [Y/n]"
+	echo "Your HAT can operate as a Thread Border Router.  Install OTBR? (WARNING: this will take awhile) [Y/n]"
 	read otbrinstall
 	
 	case $otbrinstall in
@@ -129,7 +129,7 @@ if [ $hardware -eq 1 ];	then
 		cd ot-br-posix
 		echo "installing OTBR dependencies"
 		sudo ./script/bootstrap
-		echo "Building OTBR without Access Point"
+		echo "Building OTBR ***without*** Access Point"
 		sudo NETWORK_MANAGER=0 ./script/setup
 		echo "Finished installing OTBR."
 		cd ..
@@ -155,16 +155,23 @@ if [ $hardware -eq 1 ];	then
 		# copy file to correct location
 		mkdir /home/pi/farmjenny
 		sudo mv farmjenny_gpio.sh /home/pi/farmjenny/farmjenny_gpio.sh
-		sudo chmod +x /home/pi/farmjenny/farmjenny_gpio.sh
 		# make it executable
-
+		sudo chmod +x /home/pi/farmjenny/farmjenny_gpio.sh
+		
 		# add the farmjenny_gpio service
-
-		# edit the wpantund service to start after farmjenny_gpio
-
-		# do something to update the dependencies / wants
-
-		# install the service so it runs at startup
+		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.service -O farmjenny_gpio.service
+		if [ $? -ne 0 ]; then
+    		echo "Download failed"
+    		exit 1;
+		fi
+		sudo mv farmjenny_gpio.service /lib/systemd/system/
+		# replace "After=*" with "After=farmjenny_gpio.service" so wpantund starts after gpio config
+		sudo sed -i '/After=/c\After=farmjenny_gpio.service' /lib/systemd/system/wpantund.service
+		# purge the wpantund.service file from /etc/systemd/system/ so we're sure they enable properly and have the latest info
+		sudo rm /etc/systemd/system/wpantund.service		
+		# install both services so they run at startup
+		sudo systemctl enable farmjenny_gpio.service
+		sudo systemctl enable wpantund.service
 
 		# reconfigure wpantund for RCP
 		echo "Configuring wpantund to use RCP with INT and RESET"
@@ -176,7 +183,7 @@ if [ $hardware -eq 1 ];	then
 		# save a copy of the existing wpantund configuration
 		sudo mv /etc/wpantund.conf /etc/wpantund.conf.default
 		# insert the correct wpantund configuration for rcp
-		sudo cp wpantund.conf.rcp /etc/wpantund.config
+		sudo mv wpantund.conf.rcp /etc/wpantund.config
 				
 		[Nn]* )  break;;
 		*)  echo "Please select one of: Y, y, N, or n";;
