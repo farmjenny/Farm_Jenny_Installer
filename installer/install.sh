@@ -125,8 +125,8 @@ if [ $hardware -eq 1 ];	then
         sudo apt-get --assume-yes install git
 		# Install OTBR
 		echo "downloading OTBR"
-        sudo git clone https://github.com/openthread/ot-br-posix
-		cd ot-br-posix
+        sudo git clone  https://github.com/farmjenny/borderrouter.git
+		cd borderrouter
 		echo "installing OTBR dependencies"
 		sudo ./script/bootstrap
 		echo "Building OTBR ***without*** Access Point"
@@ -138,6 +138,7 @@ if [ $hardware -eq 1 ];	then
 		echo "downloading OT"
 		sudo git clone https://github.com/openthread/openthread
 		cd openthread
+		sudo git checkout tags/thread-reference-20191113
 		sudo ./bootstrap
 		sudo make -f src/posix/Makefile-posix clean
 		sudo make -f src/posix/Makefile-posix
