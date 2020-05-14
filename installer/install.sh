@@ -11,6 +11,10 @@ case $hardware in
     *)    echo "Sorry, I don't understand. Bye!"; exit 1;
 esac
 
+# Install git
+echo "Installing git"
+sudo apt-get --assume-yes install git
+
 if [ $hardware -eq 1 ];	then
 	echo "What cellular modem is installed in the HAT?:"
 	echo "1: Nimbelink NL-SW-LTE-QBG96 (Quectel BG96)"
@@ -120,21 +124,22 @@ if [ $hardware -eq 1 ];	then
 	
 	case $otbrinstall in
 		[Yy]* )
-        # Preparations
-		echo "Installing git"
-        sudo apt-get --assume-yes install git
-		# Install OTBR
+        	# Install OTBR
 		echo "downloading OTBR"
-        sudo git clone  https://github.com/farmjenny/borderrouter.git
+        	sudo git clone  https://github.com/farmjenny/borderrouter.git
 		cd borderrouter
+		
 		echo "installing OTBR dependencies"
 		sudo ./script/bootstrap
+		
 		echo "Building OTBR ***without*** Access Point"
 		sudo NETWORK_MANAGER=0 ./script/setup
 		echo "Finished installing OTBR."
 		cd ..
+		
 		# Install OpenThread Stack for RCP
 		echo "Need OT Posix App for RCP"
+		
 		echo "downloading OT"
 		sudo git clone https://github.com/openthread/openthread
 		cd openthread
@@ -142,10 +147,12 @@ if [ $hardware -eq 1 ];	then
 		sudo ./bootstrap
 		sudo make -f src/posix/Makefile-posix clean
 		sudo make -f src/posix/Makefile-posix
+		
 		# Move ot-ncp to proper location
 		echo "moving ot-ncp to /usr/bin"
 		sudo cp /output/posix/armv7l-unknown-linux-gnueabihf/bin/* /usr/bin/
 		cd ..
+		
 		# Configure GPIO for INT and RESET at powerup (before wpantund starts)
 		echo "Configuring gpio pins at startup"
 		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.sh -O farmjenny_gpio.sh
