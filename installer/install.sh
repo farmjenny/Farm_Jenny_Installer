@@ -153,7 +153,9 @@ if [ $hardware -eq 1 ];	then
     		exit 1;
 		fi
 		# copy file to correct location
-		sudo cp farmjenny_gpio.sh /home/pi/farmjenny_gpio.sh
+		mkdir /home/pi/farmjenny
+		sudo mv farmjenny_gpio.sh /home/pi/farmjenny/farmjenny_gpio.sh
+		sudo chmod +x /home/pi/farmjenny/farmjenny_gpio.sh
 		# make it executable
 
 		# add the farmjenny_gpio service
