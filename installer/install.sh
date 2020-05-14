@@ -44,21 +44,21 @@ if [ $hardware -eq 1 ];	then
 fi
 
 echo "Downloading chatscript templates"
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/chat-connect -O chat-connect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-connect -O chat-connect
 
 if [ $? -ne 0 ]; then
     echo "Download failed"
     exit 1; 
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/chat-disconnect -O chat-disconnect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-disconnect -O chat-disconnect
 
 if [ $? -ne 0 ]; then
     echo "Download failed"
     exit 1;
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/provider -O provider
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/provider -O provider
 
 if [ $? -ne 0 ]; then
     echo "Download failed"
@@ -120,28 +120,62 @@ if [ $hardware -eq 1 ];	then
 	
 	case $otbrinstall in
 		[Yy]* )
-        	echo "Installing git"
-        	sudo apt-get --assume-yes install git
+        # Preparations
+		echo "Installing git"
+        sudo apt-get --assume-yes install git
+		# Install OTBR
 		echo "downloading OTBR"
-        	sudo git clone https://github.com/openthread/ot-br-posix
+        sudo git clone https://github.com/openthread/ot-br-posix
 		cd ot-br-posix
 		echo "installing OTBR dependencies"
 		sudo ./script/bootstrap
 		echo "Building OTBR without Access Point"
 		sudo NETWORK_MANAGER=0 ./script/setup
 		echo "Finished installing OTBR."
+		cd ..
+		# Install OpenThread Stack for RCP
 		echo "Need OT Posix App for RCP"
 		echo "downloading OT"
-		sudo git clone <https://github.com/openthread/openthread>
+		sudo git clone https://github.com/openthread/openthread
 		cd openthread
 		sudo ./bootstrap
 		sudo make -f src/posix/Makefile-posix clean
 		sudo make -f src/posix/Makefile-posix
-		echo "TODO: copy the resulting binary to the right location (the one specified in the RCP path below)"
-		echo "TODO: configure path to RCP and GPIO for INT and RESET"
-		echo "TODO: configure gpio pins for file access"
-        break;;
-		
+		# Move ot-ncp to proper location
+		echo "moving ot-ncp to /usr/bin"
+		sudo cp /output/posix/armv7l-unknown-linux-gnueabihf/bin/* /usr/bin/
+		cd ..
+		# Configure GPIO for INT and RESET at powerup (before wpantund starts)
+		echo "Configuring gpio pins at startup"
+		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.sh -O farmjenny_gpio.sh
+		if [ $? -ne 0 ]; then
+    		echo "Download failed"
+    		exit 1;
+		fi
+		# copy file to correct location
+		sudo cp farmjenny_gpio.sh /home/pi/farmjenny_gpio.sh
+		# make it executable
+
+		# add the farmjenny_gpio service
+
+		# edit the wpantund service to start after farmjenny_gpio
+
+		# do something to update the dependencies / wants
+
+		# install the service so it runs at startup
+
+		# reconfigure wpantund for RCP
+		echo "Configuring wpantund to use RCP with INT and RESET"
+		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/wpantund.conf.rcp -O wpantund.conf.rcp
+		if [ $? -ne 0 ]; then
+    		echo "Download failed"
+    		exit 1;
+		fi
+		# save a copy of the existing wpantund configuration
+		sudo mv /etc/wpantund.conf /etc/wpantund.conf.default
+		# insert the correct wpantund configuration for rcp
+		sudo cp wpantund.conf.rcp /etc/wpantund.config
+				
 		[Nn]* )  break;;
 		*)  echo "Please select one of: Y, y, N, or n";;
 	esac
