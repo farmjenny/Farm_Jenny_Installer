@@ -191,7 +191,7 @@ if [ $hardware -eq 1 ];	then
 		# save a copy of the existing wpantund configuration
 		sudo mv /etc/wpantund.conf /etc/wpantund.conf.default
 		# insert the correct wpantund configuration for rcp
-		sudo mv wpantund.conf.rcp /etc/wpantund.config
+		sudo mv wpantund.conf.rcp /etc/wpantund.conf
 		;;
 		[Nn]* )  break;;
 		*)  echo "Please select one of: Y, y, N, or n";;
