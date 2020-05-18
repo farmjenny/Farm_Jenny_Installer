@@ -12,8 +12,8 @@ case $hardware in
 esac
 
 # Install git
-echo "Installing git"
-sudo apt-get --assume-yes install git
+echo "Installing git and python-setuptools"
+sudo apt-get --assume-yes install git python-setuptools
 
 if [ $hardware -eq 1 ];	then
 	echo "What cellular modem is installed in the HAT?:"
