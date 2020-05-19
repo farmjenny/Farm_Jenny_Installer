@@ -13,7 +13,7 @@ esac
 
 # Install git
 echo "Installing git and python-setuptools"
-sudo apt-get --assume-yes install git python-setuptools
+sudo apt-get --assume-yes install git python3-setuptools python3-pip
 
 if [ $hardware -eq 1 ];	then
 	echo "What cellular modem is installed in the HAT?:"
