@@ -36,6 +36,10 @@ def delay(ms):
 ### Farm Jenny HAT + BG96 Modem Class #########
 ###############################################
 
+class FarmJennyTest:
+	def tellmeyourokay():
+		print("Farm Jenny was here.")
+
 class FarmJennyHatBg96:
 	board = "" # shield name (LTE Border Router HAT with Quectel BG96-based Modem)
 	ip_address = "" # ip address       
