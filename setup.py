@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='farmjenny_python_library',
-    version='0.1.0',
+    name='fj_farmjennycellular',
+    version='0.2.0',
     author='Rob Crouthamel',
     author_email='rob@farmjenny.com',
-    description='farm jenny python libraries',
+    description='farm jenny cellular python libraries',
     license='MIT',
     url='https://github.com/farmjenny/Farm_Jenny_Installer',
     dependency_links  = ['https://github.com/adafruit/Adafruit_Python_GPIO/tarball/master#egg=Adafruit-GPIO-0.9.3'],
