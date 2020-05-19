@@ -13,7 +13,7 @@ esac
 
 # Install git
 echo "Installing git and python-setuptools"
-sudo apt-get --assume-yes install git python3-setuptools python3-pip
+sudo apt-get --assume-yes install git python3-setuptools python3-pip ppp
 
 if [ $hardware -eq 1 ];	then
 	echo "What cellular modem is installed in the HAT?:"
@@ -34,7 +34,7 @@ if [ $hardware -eq 1 ];	then
 fi
 
 if [ $hardware -eq 1 ];	then
-	echo "Installing Farm Jenny Libraries"
+	echo "Installing Cellular Support"
 	case $modem in
 		1)    echo "Installing Farm Jenny Libraries for HAT with BG96-based modem"
 				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git
@@ -68,8 +68,6 @@ if [ $? -ne 0 ]; then
     echo "Download failed"
     exit 1;
 fi
-echo "Installing PPP"
-sudo apt-get --assume-yes install ppp
 
 echo "What is your carrier's or MVNO's APN? (e.g., hologram)"
 read carrierapn 
