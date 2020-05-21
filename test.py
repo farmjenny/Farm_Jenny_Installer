@@ -1,2 +1,2 @@
-from farmjennycellular import FarmJennyTest
-tellmeyourokay()
+from farmjennycellular import farmjennycellular
+farmjennycellular.FarmJennyTest.tellmeyourokay()
