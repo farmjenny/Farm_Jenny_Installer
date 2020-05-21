@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='fj_farmjennycellular',
-    version='0.2.5',
+    version='0.2.6',
     author='Rob Crouthamel',
     author_email='rob@farmjenny.com',
     description='farm jenny cellular python libraries',
