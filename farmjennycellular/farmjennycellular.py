@@ -37,6 +37,10 @@ def delay(ms):
 ###############################################
 
 class FarmJennyTest:
+	# Initializer function
+	def __init__(self):
+		debug_print("Test class initialized!")
+	
 	def tellmeyourokay():
 		print("Farm Jenny was here.")
 
