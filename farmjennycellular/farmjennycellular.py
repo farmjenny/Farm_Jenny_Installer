@@ -617,9 +617,3 @@ class FarmJennyHatBg96:
 	# Function for turning off user LED
 	def turnOffUserLED(self):
 		GPIO.output(self.USER_LED, 0)
-
-except KeyboardInterrupt:
-  print "You've exited the program"
-	#execute code inside this block as the program exits
-finally:
-  GPIO.cleanup()
