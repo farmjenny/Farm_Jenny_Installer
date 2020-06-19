@@ -33,7 +33,7 @@ def delay(ms):
 	time.sleep(float(ms/1000.0))
 
 ###############################################
-### Farm Jenny HAT + BG96 Modem Class #########
+### Farm Jenny Test Class #####################
 ###############################################
 
 class FarmJennyTest:
@@ -43,6 +43,10 @@ class FarmJennyTest:
 	
 	def tellmeyourokay():
 		print("Farm Jenny was here.")
+
+###########################################################################
+### Farm Jenny LTE BR HAT + Nimbelink NL-SW-LTE-QBG96 Modem Class #########
+###########################################################################
 
 class FarmJennyHatBg96:
 	board = "" # shield name (LTE Border Router HAT with Quectel BG96-based Modem)
@@ -54,9 +58,13 @@ class FarmJennyHatBg96:
 	response = "" # variable for modem self.responses
 	compose = "" # variable for command self.composes
 	
-	USER_BUTTON = 22
-	USER_LED = 27
-	MODEM_POWERDOWN = 26 
+	USER_BUTTON_N = 22 # Low when button is pressed.  There is a pullup on board.
+	USER_LED_N = 27 # Low turns on LED2 (Green)
+	MDM_PWR = 26 # High enables the power regulator for the cell modem
+	MDM_STATUS_N = 23 # Low corresponds to LED4 (Blue) lit
+	MDM_ON_OFF = 24 # set high momenarily, like pressing a power button
+	MDM_RING = 25 # Pulses low for 120mS when URC is present.  Open drain output with 1M pullup to 3.3V in modem.
+	
 
 	# Cellular Modes
 	AUTO_MODE = 0
@@ -111,9 +119,12 @@ class FarmJennyHatBg96:
 	
 	def setupGPIO(self):
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(self.MODEM_POWERDOWN, GPIO.OUT)
-		GPIO.setup(self.USER_BUTTON, GPIO.IN)
-		GPIO.setup(self.USER_LED, GPIO.OUT)
+		GPIO.setup(self.MDM_PWR, GPIO.OUT)
+		GPIO.setup(self.USER_BUTTON_N, GPIO.IN)
+		GPIO.setup(self.USER_LED_N, GPIO.OUT)
+		GPIO.setup(self.MDM_STATUS_N, GPIO.IN)
+		GPIO.setup(self.MDM_ON_OFF, GPIO.OUT)
+		GPIO.setup(self.MDM_RING, GPIO.IN)
 			
 	def __del__(self): 
 		self.clearGPIOs()
@@ -126,16 +137,28 @@ class FarmJennyHatBg96:
 	def clearGPIOs(self):
 		GPIO.cleanup()
 	
-	# Function for powering on the modem
+	# Function for enabling power to the modem.  Note: not all models will initialize automatically.
 	def enable(self):
-		GPIO.output(self.MODEM_POWERDOWN,0)
-		debug_print("Modem enabled!")
+		GPIO.output(self.MDM_PWR,1)
+		debug_print("Modem power enabled!")
 
-	# Function for powering down the modem using the voltage regulator 
+	# Function for cutting power to the modem.  Not advised during normal use as the modem will not disconnect properly.
 	def disable(self):
-		GPIO.output(self.MODEM_POWERDOWN,1)
-		debug_print("Modem disabled!")
+		GPIO.output(self.MDM_PWR,0)
+		debug_print("Modem power disabled!")
+
+	# Function for powering up or down the modem using the on-off key
+	def powerUp(self):
+		GPIO.output(self.MDM_ON_OFF,1)
+		while self.getModemStatus():  # loop until modem status goes low, indicating it has booted (LED 4, blue, lit)
+			pass
+		debug_print("modem powered up!")
+		GPIO.output(self.MDM_ON_OFF,0)
 	
+	# Function for getting modem power status
+	def getModemStatus(self):
+		return GPIO.input(self.MDM_STATUS_N)
+
 	# Function for getting modem response
 	def getResponse(self, desired_response):
 		if (ser.isOpen() == False):
@@ -606,14 +629,14 @@ class FarmJennyHatBg96:
 	#*** HAT Peripheral Functions *************************************************************
 	#******************************************************************************************
 
-	# Function for reading user button
+	# Function for reading user button (active low)
 	def readUserButton(self):
-		return GPIO.input(self.USER_BUTTON)
+		return GPIO.input(self.USER_BUTTON_N)
 
 	# Function for turning on user LED
 	def turnOnUserLED(self):
-		GPIO.output(self.USER_LED, 1)
+		GPIO.output(self.USER_LED_N, 0)
 
 	# Function for turning off user LED
 	def turnOffUserLED(self):
-		GPIO.output(self.USER_LED, 0)
+		GPIO.output(self.USER_LED_N, 1)
