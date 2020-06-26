@@ -642,15 +642,15 @@ class FarmJennyHatBg96:
 
 	# Function for fast blinking user LED
 	def fastBlinkUserLED(self):
-		p = GPIO.PWM(USER_LED_N,2)
+		p = GPIO.PWM(self.USER_LED_N,2)
 		p.start(50)
 
 	def slowBlinkUserLED(self):
-		p = GPIO.PWM(USER_LED_N,0.5)
+		p = GPIO.PWM(self.USER_LED_N,0.5)
 		p.start(50)
 
 	def stopBlinkUserLED(self):
-		p = GPIO.PWM(USER_LED_N,1)
+		p = GPIO.PWM(self.USER_LED_N,1)
 		p.stop()
 		
 	# Function for turning off user LED
