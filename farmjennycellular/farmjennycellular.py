@@ -127,7 +127,8 @@ class FarmJennyHatBg96:
 		GPIO.setup(self.MDM_RING, GPIO.IN)
 			
 	def __del__(self): 
-		self.clearGPIOs()
+		# don't clear GPIO on exit or modem will turn off
+		# self.clearGPIOs()
 		
  	# Function for clearing global compose variable 
 	def clear_compose(self):
