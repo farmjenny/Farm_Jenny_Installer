@@ -118,6 +118,7 @@ class FarmJennyHatBg96:
 		debug_print(self.board + " Class initialized!")
 	
 	def setupGPIO(self):
+		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(self.MDM_PWR, GPIO.OUT)
 		GPIO.setup(self.USER_BUTTON_N, GPIO.IN)
@@ -639,6 +640,19 @@ class FarmJennyHatBg96:
 	def turnOnUserLED(self):
 		GPIO.output(self.USER_LED_N, 0)
 
+	# Function for fast blinking user LED
+	def fastBlinkUserLED(self):
+		p = GPIO.PWM(USER_LED_N,2)
+		p.start(50)
+
+	def slowBlinkUserLED(self):
+		p = GPIO.PWM(USER_LED_N,0.5)
+		p.start(50)
+
+	def stopBlinkUserLED(self):
+		p = GPIO.PWM(USER_LED_N,1)
+		p.stop()
+		
 	# Function for turning off user LED
 	def turnOffUserLED(self):
 		GPIO.output(self.USER_LED_N, 1)
