@@ -161,7 +161,11 @@ class FarmJennyHatBg96:
 	
 	# Function for getting modem power status
 	def getModemStatus(self):
-		return GPIO.input(self.MDM_STATUS_N)
+		# Modem status pin state is undefined if modem VCC is not powered.  Return 1 if modem is disabled.
+		if not GPIO.input(self.MDM_PWR):
+			return 1
+		else:
+			return GPIO.input(self.MDM_STATUS_N)
 
 	# Function for getting modem response
 	def getResponse(self, desired_response):
