@@ -130,7 +130,7 @@ class FarmJennyHatBg96:
 	def __del__(self): 
 		# don't clear GPIO on exit or modem will turn off
 		# self.clearGPIOs()
-		debug_print("Farm Jenny Exiting.")
+		pass
 		
  	# Function for clearing global compose variable 
 	def clear_compose(self):
@@ -639,20 +639,7 @@ class FarmJennyHatBg96:
 	# Function for turning on user LED
 	def turnOnUserLED(self):
 		GPIO.output(self.USER_LED_N, 0)
-
-	# Function for fast blinking user LED
-	def fastBlinkUserLED(self):
-		p = GPIO.PWM(self.USER_LED_N,2)
-		p.start(50)
-
-	def slowBlinkUserLED(self):
-		p = GPIO.PWM(self.USER_LED_N,0.5)
-		p.start(50)
-
-	def stopBlinkUserLED(self):
-		p = GPIO.PWM(self.USER_LED_N,1)
-		p.stop()
-		
+	
 	# Function for turning off user LED
 	def turnOffUserLED(self):
 		GPIO.output(self.USER_LED_N, 1)
