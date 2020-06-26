@@ -129,6 +129,7 @@ class FarmJennyHatBg96:
 	def __del__(self): 
 		# don't clear GPIO on exit or modem will turn off
 		# self.clearGPIOs()
+		debug_print("Farm Jenny Exiting.")
 		
  	# Function for clearing global compose variable 
 	def clear_compose(self):
