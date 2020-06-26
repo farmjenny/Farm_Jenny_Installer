@@ -10,6 +10,7 @@
 
 import time
 import serial
+from decimal import Decimal
 import RPi.GPIO as GPIO
 
 # global variables
@@ -41,7 +42,7 @@ class FarmJennyTest:
 	def __init__(self):
 		debug_print("Test class initialized!")
 	
-	def tellmeyourokay():
+	def tellmeyourokay(self):
 		print("Farm Jenny was here.")
 
 ###########################################################################
@@ -216,25 +217,24 @@ class FarmJennyHatBg96:
 		if timeout is None:
 			timeout = self.timeout
 		self.sendATCommOnce(command)
-		f_debug = False
+		#f_debug = False
 		timer = millis()
 		while 1:
 			if( millis() - timer > timeout): 
 				self.sendATCommOnce(command)
 				timer = millis()
-				f_debug = False
+				#f_debug = False
 			self.response =""
 			while(ser.inWaiting()):
 				try: 
 					self.response += ser.read(ser.inWaiting()).decode('utf-8', errors='ignore')
 					delay(100)
 				except Exception as e:
-					debug_print(e.Message)
+					debug_print(e)
 				# debug_print(self.response)	
 			if(self.response.find(desired_response) != -1):
 				debug_print(self.response)
 				return self.response # returns the response of the command as string.
-				break
 
 	# Function for saving conf. and reset the modem
 	def resetModule(self):
@@ -443,7 +443,7 @@ class FarmJennyHatBg96:
 	def getLatitude(self):
 		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
-		timer = millis()
+		#timer = millis()
 		while 1:
 			self.response = ""
 			while(ser.inWaiting()):
@@ -461,7 +461,7 @@ class FarmJennyHatBg96:
 	def getLongitude(self):
 		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
-		timer = millis()
+		#timer = millis()
 		while 1:
 			self.response = ""
 			while(ser.inWaiting()):
@@ -479,7 +479,7 @@ class FarmJennyHatBg96:
 	def getSpeedMph(self):
 		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
-		timer = millis()
+		#timer = millis()
 		while 1:
 			self.response = ""
 			while(ser.inWaiting()):
@@ -497,7 +497,7 @@ class FarmJennyHatBg96:
 	def getSpeedKph(self):
 		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
-		timer = millis()
+		#timer = millis()
 		while 1:
 			self.response = ""
 			while(ser.inWaiting()):
@@ -642,11 +642,11 @@ class FarmJennyHatBg96:
 		GPIO.output(self.MDM_ON_OFF,0)
 		debug_print("power down requested.  NOTE: This can take up to 60 seconds to complete.")
 		i = 0
-		while i < 60 
-			if self.getModemStatus()
+		while i < 60: 
+			if self.getModemStatus():
 				debug_print("modem still on")
 				i += 1
-			else
+			else:
 				debug_print("modem powered down")
 				return
 		debug_print("power down timed out.  Modem may be stuck.")
