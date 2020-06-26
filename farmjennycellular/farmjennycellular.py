@@ -627,6 +627,29 @@ class FarmJennyHatBg96:
 	# Function for closing server connection
 	def closeConnection(self):
 		self.sendATComm("AT+QICLOSE=1","\r\n")
+		
+	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using AT commands (preferred)
+	def powerDownAT(self):
+		self.sendATComm("ATE0","OK\r\n")
+		# Deregister from the network (within 60 seconds and power down)
+		self.sendATComm("AT+QPOWD=1","POWERED DOWN\r\n", 60000)
+
+	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using On/off Line (Hardware)
+	def powerDownHW(self):
+		# pulse ON-OFF line for at least 650 mS to initiate a powerdown
+		GPIO.output(self.MDM_ON_OFF,1)
+		delay(800)
+		GPIO.output(self.MDM_ON_OFF,0)
+		debug_print("power down requested.  NOTE: This can take up to 60 seconds to complete.")
+		i = 0
+		while i < 60 
+			if self.getModemStatus()
+				debug_print("modem still on")
+				i += 1
+			else
+				debug_print("modem powered down")
+				return
+		debug_print("power down timed out.  Modem may be stuck.")
 	
 	#******************************************************************************************
 	#*** HAT Peripheral Functions *************************************************************
