@@ -7,6 +7,8 @@ SET='\033[0m'
 
 # Bootstrapping ----------------------------------------------------------------
 echo "${YELLOW}Preparing for installation${SET}"
+sudo apt-get --assume-yes update
+sudo apt-get --assume-yes upgrade
 sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp 
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
@@ -46,8 +48,6 @@ esac
 
 if [ $hardware -eq 1 ];	then
 
-	devicepath= "ttyUSB3"
-
 	echo "${YELLOW}What cellular modem is installed in the HAT?:${SET}"
 	echo "${YELLOW}1: Nimbelink NL-SW-LTE-QBG96 (Quectel BG96)${SET}"
 	echo "${YELLOW}2: Other modem${SET}"
@@ -56,13 +56,10 @@ if [ $hardware -eq 1 ];	then
 	read modem
 	case $modem in
 		1)    echo "${YELLOW}You selected Nimbelink NL-SW-LTE-QBG96, configuring for LTE-M with 2G Fallback${SET}"
-				devicepath= "ttyUSB3"
 				EXTRA='';;
 		2)    echo "${YELLOW}You selected Other modem, no extended settings to apply.${SET}"
-				devicepath= "ttyUSB3"
 				EXTRA='';;
 		3)    echo "${YELLOW}You indicated no cellular modem installed, skipping modem config -- rerun this installer if a modem is added later.${SET}"
-				devicepath= "ttyUSB3"
 				EXTRA='';;
 		*) 	  echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
@@ -81,6 +78,9 @@ if [ $hardware -eq 1 ];	then
 		*)    echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
 fi
+
+echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
+read devicepath
 
 echo "${YELLOW}What is your carrier's or MVNO's APN? (e.g., hologram)${SET}"
 read carrierapn 
@@ -134,17 +134,19 @@ if [ $hardware -eq 1 ];	then
 		[Yy]* )
         	# Install OTBR
 		echo "${YELLOW}downloading OTBR${SET}"
-        	sudo git clone  https://github.com/farmjenny/borderrouter.git
-		cd borderrouter
+        	sudo git clone  https://github.com/openthread/ot-br-posix.git
+		cd ot-br-posix
 		
 		echo "${YELLOW}installing OTBR dependencies${SET}"
 		sudo ./script/bootstrap
 		
-		echo "${YELLOW}Building OTBR ***without*** Access Point${SET}"
-		sudo NETWORK_MANAGER=0 ./script/setup
+		echo "${YELLOW}Building OTBR with AP Management Interface${SET}"
+		sudo ./script/setup
 		echo "${YELLOW}Finished installing OTBR.${SET}"
 		cd ..
 		
+		: '
+
 		# Install OpenThread Stack for RCP
 		echo "${YELLOW}Need OT Posix App for RCP${SET}"
 		
@@ -160,7 +162,8 @@ if [ $hardware -eq 1 ];	then
 		echo "${YELLOW}moving ot-ncp to /usr/bin${SET}"
 		sudo cp /output/posix/armv7l-unknown-linux-gnueabihf/bin/* /usr/bin/
 		cd ..
-		
+		'
+
 		# Configure GPIO for INT and RESET at powerup (before wpantund starts)
 		echo "${YELLOW}Configuring gpio pins at startup${SET}"
 		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.sh -O farmjenny_gpio.sh
@@ -181,14 +184,18 @@ if [ $hardware -eq 1 ];	then
     		exit 1;
 		fi
 		sudo mv farmjenny_gpio.service /lib/systemd/system/
-		# replace "After=*" with "After=farmjenny_gpio.service" so wpantund starts after gpio config
-		sudo sed -i '/After=/c\After=farmjenny_gpio.service' /lib/systemd/system/wpantund.service
-		# purge the wpantund.service file from /etc/systemd/system/ so we're sure they enable properly and have the latest info
-		sudo rm /etc/systemd/system/wpantund.service		
-		# install both services so they run at startup
-		sudo systemctl enable farmjenny_gpio.service
-		sudo systemctl enable wpantund.service
 
+
+		# replace "After=*" with "After=farmjenny_gpio.service" so wpantund starts after gpio config
+		#sudo sed -i '/After=/c\After=farmjenny_gpio.service' /lib/systemd/system/wpantund.service
+		# purge the wpantund.service file from /etc/systemd/system/ so we're sure they enable properly and have the latest info
+		#sudo rm /etc/systemd/system/wpantund.service		
+		# install both services so they run at startup
+
+		sudo systemctl enable farmjenny_gpio.service
+		#sudo systemctl enable wpantund.service
+		
+		:'
 		# reconfigure wpantund for RCP
 		echo "${YELLOW}Configuring wpantund to use RCP with INT and RESET${SET}"
 		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/wpantund.conf.rcp -O wpantund.conf.rcp
@@ -200,6 +207,7 @@ if [ $hardware -eq 1 ];	then
 		sudo mv /etc/wpantund.conf /etc/wpantund.conf.default
 		# insert the correct wpantund configuration for rcp
 		sudo mv wpantund.conf.rcp /etc/wpantund.conf
+		'
 		;;
 		[Nn]* )  break;;
 		*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
