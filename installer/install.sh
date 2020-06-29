@@ -79,9 +79,6 @@ if [ $? -ne 0 ]; then
     exit 1;
 fi
 
-echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
-read devicepath
-
 echo "${YELLOW}What is your carrier's or MVNO's APN? (e.g., hologram)${SET}"
 read carrierapn 
 
@@ -110,12 +107,17 @@ do
 	esac
 done
 
+echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
+read devicepath
+
+sudo rm -r /etc/chatscripts
 mkdir -p /etc/chatscripts
 sed -i "/#EXTRA/d" chat-connect
 
 mv chat-connect /etc/chatscripts/
 mv chat-disconnect /etc/chatscripts/
 
+sudo rm -r /etc/ppp/peers
 mkdir -p /etc/ppp/peers
 sed -i "s/#APN/$carrierapn/" provider
 sed -i "s/#DEVICE/$devicepath/" provider
