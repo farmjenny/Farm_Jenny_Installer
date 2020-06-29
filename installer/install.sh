@@ -11,28 +11,6 @@ sudo apt-get --assume-yes update
 sudo apt-get --assume-yes upgrade
 sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp 
 
-echo "${YELLOW}Downloading chatscript templates${SET}"
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-connect -O chat-connect
-
-if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
-    exit 1; 
-fi
-
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-disconnect -O chat-disconnect
-
-if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
-    exit 1;
-fi
-
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/provider -O provider
-
-if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
-    exit 1;
-fi
-
 # User input
 
 echo "${YELLOW}Select the Farm Jenny hardware to install:${SET}"
@@ -77,6 +55,28 @@ if [ $hardware -eq 1 ];	then
 		3)    echo "${YELLOW}No libraries to install.${SET}";;
 		*)    echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
+fi
+
+echo "${YELLOW}Downloading chatscript templates${SET}"
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-connect -O chat-connect
+
+if [ $? -ne 0 ]; then
+    echo "${RED}Download failed${SET}"
+    exit 1; 
+fi
+
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-disconnect -O chat-disconnect
+
+if [ $? -ne 0 ]; then
+    echo "${RED}Download failed${SET}"
+    exit 1;
+fi
+
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/provider -O provider
+
+if [ $? -ne 0 ]; then
+    echo "${RED}Download failed${SET}"
+    exit 1;
 fi
 
 echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
