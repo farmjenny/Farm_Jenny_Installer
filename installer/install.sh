@@ -215,5 +215,5 @@ if [ $hardware -eq 1 ];	then
 fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 
-read -p "${YELLOW}Farm Jenny installation is complete, press ENTER key to reboot and start your device${SET}" ENTER
+read -p "Farm Jenny installation is complete, press ENTER key to reboot and start your device" ENTER
 reboot
