@@ -1,0 +1,5 @@
+# Farm Jenny HAT settings for otbr-agent. This file is sourced by systemd
+
+# Options to pass to otbr-agent
+#OTBR_AGENT_OPTS="-I wpan0 spinel+hdlc+uart:///dev/ttyACM0"
+OTBR_AGENT_OPTS="-I wpan0 spinel+spi:///dev/spidev0.1?gpio-int-device=/dev/gpiochip0&gpio-int-line=21&gpio-reset-device=/dev/gpiochip0&gpio-reset-line=20&no-reset=1&spi-speed=1000000"

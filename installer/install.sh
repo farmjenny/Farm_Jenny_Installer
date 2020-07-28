@@ -44,6 +44,33 @@ if [ $hardware -eq 1 ];	then
 fi
 
 if [ $hardware -eq 1 ];	then
+	echo "${YELLOW}Daily automatic apt-get update/upgrades will consume significant cellular data.  May we disable them for you? [Y/n]${SET}"
+	read disableapt
+	
+	case $disableapt in
+		[Yy]* )
+		# disable regular apt-get functionality    
+        echo "${YELLOW}Disabling automatic apt-get activities.${SET}"
+		# Stop running processes
+		sudo systemctl stop apt-daily.timer
+		sudo systemctl stop apt-daily-upgrade.timer
+		# Prevent from restarting at boot
+		sudo systemctl disable apt-daily.timer
+		sudo systemctl disable apt-daily.service
+		sudo systemctl disable apt-daily-upgrade.timer
+		sudo systemctl daemon-reload
+        
+		;;
+
+		[Nn]* )  
+		echo "${RED}Automatic apt-get is still enabled.  Please monitor your cellular data use carefully to avoid nasty charges.${SET}"
+		break;;
+
+		*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
+	esac
+fi
+
+if [ $hardware -eq 1 ];	then
 	echo "${YELLOW}Installing Cellular Support${SET}"
 	case $modem in
 		1)    echo "${YELLOW}Installing Farm Jenny Libraries for HAT with BG96-based modem${SET}"
@@ -55,6 +82,73 @@ if [ $hardware -eq 1 ];	then
 		3)    echo "${YELLOW}No libraries to install.${SET}";;
 		*)    echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
+fi
+
+if [ $hardware -eq 1 ];	then
+	# Install the Farm Jenny gpio service to operate power, status, user led, etc. using legacy sysfs acccess.
+	echo "${YELLOW}Configuring gpio pins at startup${SET}"
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.sh -O farmjenny_gpio.sh
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	mkdir /home/pi/farmjenny
+	sudo mv farmjenny_gpio.sh /home/pi/farmjenny/farmjenny_gpio.sh
+	# make it executable
+	sudo chmod +x /home/pi/farmjenny/farmjenny_gpio.sh
+	
+	# add the farmjenny_gpio service
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.service -O farmjenny_gpio.service
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	sudo mv farmjenny_gpio.service /lib/systemd/system/
+	sudo systemctl enable farmjenny_gpio.service
+
+	# Get the modem startup python utility
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_off.py -O modem_on.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv modem_off.py /home/pi/farmjenny/modem_on.py
+	# make it executable
+	sudo chmod +x /home/pi/farmjenny/modem_on.py
+
+	# Install the Farm Jenny shutdown service to ensure a proper modem disconnect and shutdown (not doing so aggrevates the cell carriers).
+	echo "${YELLOW}Installing Farm Jenny shutdown service for graceful cellular disconnect.${SET}"
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_shutdown.sh -O farmjenny_shutdown.sh
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv farmjenny_shutdown.sh /home/pi/farmjenny/farmjenny_shutdown.sh
+	# make it executable
+	sudo chmod +x /home/pi/farmjenny/farmjenny_shutdown.sh
+
+	# Get the modem shutdown python utility
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_off.py -O modem_off.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv modem_off.py /home/pi/farmjenny/modem_off.py
+	# make it executable
+	sudo chmod +x /home/pi/farmjenny/modem_off.py		
+	
+	# add the farmjenny_shutdown service
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_shutdown.service -O farmjenny_shutdown.service
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	sudo mv farmjenny_shutdown.service /lib/systemd/system/
+	sudo systemctl enable farmjenny_shutdown.service
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
@@ -108,7 +202,7 @@ do
 done
 
 echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
-read devicepath
+read devicename
 
 sudo rm -r /etc/chatscripts
 mkdir -p /etc/chatscripts
@@ -120,7 +214,7 @@ mv chat-disconnect /etc/chatscripts/
 sudo rm -r /etc/ppp/peers
 mkdir -p /etc/ppp/peers
 sed -i "s/#APN/$carrierapn/" provider
-sed -i "s/#DEVICE/$devicepath/" provider
+sed -i "s/#DEVICE/$devicename/" provider
 mv provider /etc/ppp/peers/provider
 
 if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
@@ -134,82 +228,36 @@ if [ $hardware -eq 1 ];	then
 	
 	case $otbrinstall in
 		[Yy]* )
-        	# Install OTBR
-		echo "${YELLOW}downloading OTBR${SET}"
+        # Install OTBR
+		echo "${YELLOW}Downloading OTBR${SET}"
         	sudo git clone  https://github.com/openthread/ot-br-posix.git
 		cd ot-br-posix
-		
-		echo "${YELLOW}installing OTBR dependencies${SET}"
+		# check out a version ot OTBR we have tested
+		git checkout ad26882
+		# tell the build process we're using an RCP over SPI so it installs the interface
+		export OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI"
+
+		echo "${YELLOW}Installing OTBR dependencies${SET}"
 		sudo ./script/bootstrap
 		
-		echo "${YELLOW}Building OTBR with AP Management Interface${SET}"
+		echo "${YELLOW}Building OTBR${SET}"
 		sudo ./script/setup
+
+		echo "${YELLOW}Configuring OTBR to use the radio on the HAT${SET}"
+		# replace the otbr-agent default settings with correct OTBR_AGENT_OPTS
+		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/otbr-agent-fj -O otbr-agent-fj
+		if [ $? -ne 0 ]; then
+    		echo "${RED}Download failed${SET}"
+    		exit 1;
+		fi
+		# save a copy of the existing otbr-agent file
+		sudo mv /etc/default/otbr-agent /etc/default/otbr-agent-default
+		# insert the correct otbr-agent configuration file for the Farm Jenny HAT
+		sudo mv otbr-agent-fj /etc/default/otbr-agent
+
 		echo "${YELLOW}Finished installing OTBR.${SET}"
 		cd ..
-		
-		: '
 
-		# Install OpenThread Stack for RCP
-		echo "${YELLOW}Need OT Posix App for RCP${SET}"
-		
-		echo "${YELLOW}downloading OT${SET}"
-		sudo git clone https://github.com/openthread/openthread
-		cd openthread
-		sudo git checkout tags/thread-reference-20191113
-		sudo ./bootstrap
-		sudo make -f src/posix/Makefile-posix clean
-		sudo make -f src/posix/Makefile-posix
-		
-		# Move ot-ncp to proper location
-		echo "${YELLOW}moving ot-ncp to /usr/bin${SET}"
-		sudo cp /output/posix/armv7l-unknown-linux-gnueabihf/bin/* /usr/bin/
-		cd ..
-		'
-
-		# Configure GPIO for INT and RESET at powerup (before wpantund starts)
-		echo "${YELLOW}Configuring gpio pins at startup${SET}"
-		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.sh -O farmjenny_gpio.sh
-		if [ $? -ne 0 ]; then
-    		echo "${RED}Download failed${SET}"
-    		exit 1;
-		fi
-		# copy file to correct location
-		mkdir /home/pi/farmjenny
-		sudo mv farmjenny_gpio.sh /home/pi/farmjenny/farmjenny_gpio.sh
-		# make it executable
-		sudo chmod +x /home/pi/farmjenny/farmjenny_gpio.sh
-		
-		# add the farmjenny_gpio service
-		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.service -O farmjenny_gpio.service
-		if [ $? -ne 0 ]; then
-    		echo "${RED}Download failed${SET}"
-    		exit 1;
-		fi
-		sudo mv farmjenny_gpio.service /lib/systemd/system/
-
-
-		# replace "After=*" with "After=farmjenny_gpio.service" so wpantund starts after gpio config
-		#sudo sed -i '/After=/c\After=farmjenny_gpio.service' /lib/systemd/system/wpantund.service
-		# purge the wpantund.service file from /etc/systemd/system/ so we're sure they enable properly and have the latest info
-		#sudo rm /etc/systemd/system/wpantund.service		
-		# install both services so they run at startup
-
-		sudo systemctl enable farmjenny_gpio.service
-		#sudo systemctl enable wpantund.service
-		
-		:'
-		# reconfigure wpantund for RCP
-		echo "${YELLOW}Configuring wpantund to use RCP with INT and RESET${SET}"
-		wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/wpantund.conf.rcp -O wpantund.conf.rcp
-		if [ $? -ne 0 ]; then
-    		echo "${RED}Download failed${SET}"
-    		exit 1;
-		fi
-		# save a copy of the existing wpantund configuration
-		sudo mv /etc/wpantund.conf /etc/wpantund.conf.default
-		# insert the correct wpantund configuration for rcp
-		sudo mv wpantund.conf.rcp /etc/wpantund.conf
-		'
 		;;
 		[Nn]* )  break;;
 		*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
@@ -217,5 +265,5 @@ if [ $hardware -eq 1 ];	then
 fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 
-read -p "Farm Jenny installation is complete, press ENTER key to reboot and start your device" ENTER
+read -p "Press ENTER key to reboot and start your device" ENTER
 reboot

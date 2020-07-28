@@ -2,17 +2,10 @@
 
 # This script is intended for installation as a service to be run at boot.  To check the status of 
 # this service, use "sudo systemctl status farmjenny_gpio"
+# This service exports selected gpio on the Farm Jenny HAT using legacy sysfs (file) userspace.
+# Pins for the 802.15.4 radio (NCP_INT and NCPnRST) are not included as these use the newer chardev userspace.
 
-echo "Farm Jenny GPIO Configured here"
-
-# GPIO21 is NCP_INT, an ACTIVE HIGH INPUT, which is used by the NCP to signal the Pi's attention
-echo 21 > /sys/class/gpio/export
-echo in > /sys/class/gpio/gpio21/direction
-
-# GPIO20 is NCP_nRST, an ACTIVE LOW OUTPUT, which should be initially set HIGH
-echo 20 > /sys/class/gpio/export
-echo out > /sys/class/gpio/gpio20/direction
-echo 1 > /sys/class/gpio/gpio20/value
+echo "Starting Farm Jenny HAT GPIO Configuration"
 
 # GPIO22 is nUSR_BUTTON, an ACTIVE LOW INPUT, which is pulled up in hardware
 echo 22 > /sys/class/gpio/export
@@ -42,4 +35,4 @@ echo 24 > /sys/class/gpio/export
 echo out > /sys/class/gpio/gpio24/direction
 echo 0 > /sys/class/gpio/gpio24/value
 
-echo "Done configuring Farm Jenny GPIO."
+echo "Done configuring Farm Jenny HAT GPIO."

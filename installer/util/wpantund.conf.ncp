@@ -1,2 +1,0 @@
-# wpantund configuration file for NCP
-Config:NCP:SocketPath "system:/usr/bin/spi-hdlc-adapter -i /sys/class/gpio/gpio21 -r /sys/class/gpio/gpio20 /dev/spidev0.1"
