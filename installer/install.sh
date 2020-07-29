@@ -5,11 +5,17 @@ RED='\033[0;31m'
 BLUE='\033[1;34m'
 SET='\033[0m'
 
+# Set up logging ---------------------------------------------------------------
+mkdir -p /home/pi/farmjenny/logs
+touch /home/pi/farmjenny/logs/install.log
+echo "Installing Farm Jenny HAT" &? /home/pi/farmjenny/logs/install.log
+lsb_release -a &? /home/pi/farmjenny/logs/install.log
+
 # Bootstrapping ----------------------------------------------------------------
 echo "${YELLOW}Preparing for installation${SET}"
 sudo apt-get --assume-yes update
 sudo apt-get --assume-yes upgrade
-sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp 
+sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 # User input
 
@@ -52,13 +58,13 @@ if [ $hardware -eq 1 ];	then
 		# disable regular apt-get functionality    
         echo "${YELLOW}Disabling automatic apt-get activities.${SET}"
 		# Stop running processes
-		sudo systemctl stop apt-daily.timer
-		sudo systemctl stop apt-daily-upgrade.timer
+		sudo systemctl stop apt-daily.timer 2>&1 | tee /home/pi/farmjenny/logs/install.log
+		sudo systemctl stop apt-daily-upgrade.timer 2>&1 | tee /home/pi/farmjenny/logs/install.log
 		# Prevent from restarting at boot
-		sudo systemctl disable apt-daily.timer
-		sudo systemctl disable apt-daily.service
-		sudo systemctl disable apt-daily-upgrade.timer
-		sudo systemctl daemon-reload
+		sudo systemctl disable apt-daily.timer 2>&1 | tee /home/pi/farmjenny/logs/install.log
+		sudo systemctl disable apt-daily.service 2>&1 | tee /home/pi/farmjenny/logs/install.log
+		sudo systemctl disable apt-daily-upgrade.timer 2>&1 | tee /home/pi/farmjenny/logs/install.log
+		sudo systemctl daemon-reload 2>&1 | tee /home/pi/farmjenny/logs/install.log
         
 		;;
 
@@ -74,9 +80,9 @@ if [ $hardware -eq 1 ];	then
 	echo "${YELLOW}Installing Cellular Support${SET}"
 	case $modem in
 		1)    echo "${YELLOW}Installing Farm Jenny Libraries for HAT with BG96-based modem${SET}"
-				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git
+				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git 2>&1 | tee /home/pi/farmjenny/logs/install.log
 				cd Farm_Jenny_Installer
-				sudo python3 setup.py install
+				sudo python3 setup.py install 2>&1 | tee /home/pi/farmjenny/logs/install.log
 				;;
 		2)    echo "${YELLOW}No libraries to install.${SET}";;
 		3)    echo "${YELLOW}No libraries to install.${SET}";;
@@ -93,10 +99,10 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	mkdir /usr/local/bin/farmjenny
-	sudo mv farmjenny_gpio.sh /usr/local/bin/farmjenny/farmjenny_gpio.sh
+	mkdir /usr/local/bin/farmjenny 2>&1 | tee /home/pi/farmjenny/logs/install.log
+	sudo mv farmjenny_gpio.sh /usr/local/bin/farmjenny/farmjenny_gpio.sh 2>&1 | tee /home/pi/farmjenny/logs/install.log
 	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_gpio.sh
+	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_gpio.sh 2>&1 | tee /home/pi/farmjenny/logs/install.log
 	
 	# add the farmjenny_gpio service
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.service -O farmjenny_gpio.service
@@ -104,8 +110,8 @@ if [ $hardware -eq 1 ];	then
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
-	sudo mv farmjenny_gpio.service /lib/systemd/system/
-	sudo systemctl enable farmjenny_gpio.service
+	sudo mv farmjenny_gpio.service /lib/systemd/system/ 2>&1 | tee /home/pi/farmjenny/logs/install.log
+	sudo systemctl enable farmjenny_gpio.service 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 	# Get the modem startup python utility
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_on.py -O modem_on.py
@@ -114,9 +120,9 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv modem_on.py /usr/local/bin/farmjenny/modem_on.py
+	sudo mv modem_on.py /usr/local/bin/farmjenny/modem_on.py 2>&1 | tee /home/pi/farmjenny/logs/install.log
 	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/modem_on.py
+	sudo chmod +x /usr/local/bin/farmjenny/modem_on.py 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 	# Install the Farm Jenny shutdown service to ensure a proper modem disconnect and shutdown (not doing so aggrevates the cell carriers).
 	echo "${YELLOW}Installing Farm Jenny shutdown service for graceful cellular disconnect.${SET}"
@@ -126,9 +132,9 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv farmjenny_shutdown.sh /usr/local/bin/farmjenny/farmjenny_shutdown.sh
+	sudo mv farmjenny_shutdown.sh /usr/local/bin/farmjenny/farmjenny_shutdown.sh 2>&1 | tee /home/pi/farmjenny/logs/install.log
 	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_shutdown.sh
+	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_shutdown.sh 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 	# Get the modem shutdown python utility
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_off.py -O modem_off.py
@@ -137,9 +143,9 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv modem_off.py /usr/local/bin/farmjenny/modem_off.py
+	sudo mv modem_off.py /usr/local/bin/farmjenny/modem_off.py 2>&1 | tee /home/pi/farmjenny/logs/install.log
 	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/modem_off.py		
+	sudo chmod +x /usr/local/bin/farmjenny/modem_off.py	2>&1 | tee /home/pi/farmjenny/logs/install.log
 	
 	# add the farmjenny_shutdown service
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_shutdown.service -O farmjenny_shutdown.service
@@ -147,8 +153,8 @@ if [ $hardware -eq 1 ];	then
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
-	sudo mv farmjenny_shutdown.service /lib/systemd/system/
-	sudo systemctl enable farmjenny_shutdown.service
+	sudo mv farmjenny_shutdown.service /lib/systemd/system/ 2>&1 | tee /home/pi/farmjenny/logs/install.log
+	sudo systemctl enable farmjenny_shutdown.service 2>&1 | tee /home/pi/farmjenny/logs/install.log
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
@@ -204,18 +210,18 @@ done
 echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
 read devicename
 
-sudo rm -r /etc/chatscripts
-sudo mkdir -p /etc/chatscripts
+sudo rm -r /etc/chatscripts 2>&1 | tee /home/pi/farmjenny/logs/install.log
+sudo mkdir -p /etc/chatscripts 2>&1 | tee /home/pi/farmjenny/logs/install.log
 sed -i "/#EXTRA/d" chat-connect
 
-mv chat-connect /etc/chatscripts/
-mv chat-disconnect /etc/chatscripts/
+mv chat-connect /etc/chatscripts/ 2>&1 | tee /home/pi/farmjenny/logs/install.log
+mv chat-disconnect /etc/chatscripts/ 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
-sudo rm -r /etc/ppp/peers
-sudo mkdir -p /etc/ppp/peers
+sudo rm -r /etc/ppp/peers 2>&1 | tee /home/pi/farmjenny/logs/install.log
+sudo mkdir -p /etc/ppp/peers 2>&1 | tee /home/pi/farmjenny/logs/install.log
 sed -i "s/#APN/$carrierapn/" provider
 sed -i "s/#DEVICE/$devicename/" provider
-mv provider /etc/ppp/peers/provider
+mv provider /etc/ppp/peers/provider 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
     echo "sudo route del default" >> /etc/ppp/ip-up
@@ -230,18 +236,18 @@ if [ $hardware -eq 1 ];	then
 		[Yy]* )
         # Install OTBR
 		echo "${YELLOW}Downloading OTBR${SET}"
-        	sudo git clone  https://github.com/openthread/ot-br-posix.git
+        	sudo git clone  https://github.com/openthread/ot-br-posix.git 2>&1 | tee /home/pi/farmjenny/logs/install.log
 		cd ot-br-posix
 		# check out a version ot OTBR we have tested
-		git checkout ad26882
+		git checkout ad26882 2>&1 | tee /home/pi/farmjenny/logs/install.log
 		# tell the build process we're using an RCP over SPI so it installs the interface
-		export OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI"
+		export OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI" 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Installing OTBR dependencies${SET}"
-		sudo ./script/bootstrap
+		sudo ./script/bootstrap 2>&1 | tee /home/pi/farmjenny/logs/install.log
 		
 		echo "${YELLOW}Building OTBR${SET}"
-		sudo ./script/setup
+		sudo ./script/setup 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Configuring OTBR to use the radio on the HAT${SET}"
 		# replace the otbr-agent default settings with correct OTBR_AGENT_OPTS
@@ -251,9 +257,9 @@ if [ $hardware -eq 1 ];	then
     		exit 1;
 		fi
 		# save a copy of the existing otbr-agent file
-		sudo mv /etc/default/otbr-agent /etc/default/otbr-agent-default
+		sudo mv /etc/default/otbr-agent /etc/default/otbr-agent-default 2>&1 | tee /home/pi/farmjenny/logs/install.log
 		# insert the correct otbr-agent configuration file for the Farm Jenny HAT
-		sudo mv otbr-agent-fj /etc/default/otbr-agent
+		sudo mv otbr-agent-fj /etc/default/otbr-agent 2>&1 | tee /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Finished installing OTBR.${SET}"
 		cd ..
@@ -266,6 +272,6 @@ fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 
 read -p "Press ENTER key to cleanup, reboot and start your device" ENTER
-sudo rm -r Farm_Jenny_Installer
-sudo rm -r install.sh
+sudo rm -r Farm_Jenny_Installer 2>&1 | tee /home/pi/farmjenny/logs/install.log
+sudo rm -r install.sh 2>&1 | tee /home/pi/farmjenny/logs/install.log
 reboot
