@@ -8,10 +8,10 @@ SET='\033[0m'
 # Set up logging ---------------------------------------------------------------
 mkdir -p /home/pi/farmjenny/logs
 touch /home/pi/farmjenny/logs/install.log
-echo "Installing Farm Jenny HAT" &? /home/pi/farmjenny/logs/install.log
+echo "$(date) - Installing Farm Jenny HAT" &? /home/pi/farmjenny/logs/install.log
 lsb_release -a &? /home/pi/farmjenny/logs/install.log
 
-_installdir="$(pwd)"
+INSTALL_DIRECTORY="$(pwd)"
 
 # Bootstrapping ----------------------------------------------------------------
 echo "${YELLOW}Preparing for installation${SET}"
@@ -274,7 +274,8 @@ fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 
 read -p "Press ENTER key to cleanup, reboot and start your device" ENTER
-sudo cd $_installdir
+sudo cd "${INSTALL_DIRECTORY}"
 sudo rm -r Farm_Jenny_Installer 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sudo rm -r install.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+echo "$(date) - Instal for Farm Jenny HAT finished." &? /home/pi/farmjenny/logs/install.log
 reboot
