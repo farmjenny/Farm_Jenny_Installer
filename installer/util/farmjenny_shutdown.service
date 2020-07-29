@@ -1,14 +1,11 @@
 [Unit]
 Description=Disconnect Modem
-#DefaultDependencies=no
-#Before=poweroff.target halt.target reboot.target
 
 [Service]
 ExecStart=/bin/true
-ExecStop=/home/pi/farmjenny/farmjenny_shutdown.sh
+ExecStop=/usr/local/bin/farmjenny/farmjenny_shutdown.sh
 Type=oneshot
 RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
-#WantedBy=poweroff.target halt.target reboot.target

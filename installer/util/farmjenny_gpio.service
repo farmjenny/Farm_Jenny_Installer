@@ -1,14 +1,14 @@
 [Unit]
 Description=farmjenny_gpio
 After=network.target
-ConditionPathExists=/home/pi/farmjenny
+ConditionPathExists=/usr/local/bin/farmjenny
 
 [Service]
 Type=oneshot
-WorkingDirectory=/home/pi/farmjenny/
+WorkingDirectory=/usr/local/bin/farmjenny
 ExecStart=/bin/bash farmjenny_gpio.sh
 Restart=no
 
 [Install]
-WantedBy=wpantund.service
+WantedBy=multi-user.target
 Alias=farmjenny_gpio.service

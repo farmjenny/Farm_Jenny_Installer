@@ -93,10 +93,10 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	mkdir /home/pi/farmjenny
-	sudo mv farmjenny_gpio.sh /home/pi/farmjenny/farmjenny_gpio.sh
+	mkdir /usr/local/bin/farmjenny
+	sudo mv farmjenny_gpio.sh /usr/local/bin/farmjenny/farmjenny_gpio.sh
 	# make it executable
-	sudo chmod +x /home/pi/farmjenny/farmjenny_gpio.sh
+	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_gpio.sh
 	
 	# add the farmjenny_gpio service
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_gpio.service -O farmjenny_gpio.service
@@ -114,9 +114,9 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv modem_off.py /home/pi/farmjenny/modem_on.py
+	sudo mv modem_off.py /usr/local/bin/farmjenny/modem_on.py
 	# make it executable
-	sudo chmod +x /home/pi/farmjenny/modem_on.py
+	sudo chmod +x /usr/local/bin/farmjenny/modem_on.py
 
 	# Install the Farm Jenny shutdown service to ensure a proper modem disconnect and shutdown (not doing so aggrevates the cell carriers).
 	echo "${YELLOW}Installing Farm Jenny shutdown service for graceful cellular disconnect.${SET}"
@@ -126,9 +126,9 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv farmjenny_shutdown.sh /home/pi/farmjenny/farmjenny_shutdown.sh
+	sudo mv farmjenny_shutdown.sh /usr/local/bin/farmjenny/farmjenny_shutdown.sh
 	# make it executable
-	sudo chmod +x /home/pi/farmjenny/farmjenny_shutdown.sh
+	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_shutdown.sh
 
 	# Get the modem shutdown python utility
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_off.py -O modem_off.py
@@ -137,9 +137,9 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv modem_off.py /home/pi/farmjenny/modem_off.py
+	sudo mv modem_off.py /usr/local/bin/farmjenny/modem_off.py
 	# make it executable
-	sudo chmod +x /home/pi/farmjenny/modem_off.py		
+	sudo chmod +x /usr/local/bin/farmjenny/modem_off.py		
 	
 	# add the farmjenny_shutdown service
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/farmjenny_shutdown.service -O farmjenny_shutdown.service
