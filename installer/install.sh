@@ -108,13 +108,13 @@ if [ $hardware -eq 1 ];	then
 	sudo systemctl enable farmjenny_gpio.service
 
 	# Get the modem startup python utility
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_off.py -O modem_on.py
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_on.py -O modem_on.py
 	if [ $? -ne 0 ]; then
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv modem_off.py /usr/local/bin/farmjenny/modem_on.py
+	sudo mv modem_on.py /usr/local/bin/farmjenny/modem_on.py
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/modem_on.py
 
@@ -205,14 +205,14 @@ echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
 read devicename
 
 sudo rm -r /etc/chatscripts
-mkdir -p /etc/chatscripts
+sudo mkdir -p /etc/chatscripts
 sed -i "/#EXTRA/d" chat-connect
 
 mv chat-connect /etc/chatscripts/
 mv chat-disconnect /etc/chatscripts/
 
 sudo rm -r /etc/ppp/peers
-mkdir -p /etc/ppp/peers
+sudo mkdir -p /etc/ppp/peers
 sed -i "s/#APN/$carrierapn/" provider
 sed -i "s/#DEVICE/$devicename/" provider
 mv provider /etc/ppp/peers/provider
@@ -265,5 +265,7 @@ if [ $hardware -eq 1 ];	then
 fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 
-read -p "Press ENTER key to reboot and start your device" ENTER
+read -p "Press ENTER key to cleanup, reboot and start your device" ENTER
+sudo rm -r Farm_Jenny_Installer
+sudo rm -r install.sh
 reboot
