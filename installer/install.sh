@@ -254,11 +254,11 @@ if [ $hardware -eq 1 ];	then
 		#source in the next line ensures the environment variable we just set is preserved
 		# see:  https://stackoverflow.com/questions/8352851/how-to-call-one-shell-script-from-another-shell-script
 
-		sudo source ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		source ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Building OTBR${SET}"
 		#source in the next line ensures the environment variable we just set is preserved
-		sudo source ./script/setup 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		source ./script/setup 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Configuring OTBR to use the radio on the HAT${SET}"
 		# replace the otbr-agent default settings with correct OTBR_AGENT_OPTS
