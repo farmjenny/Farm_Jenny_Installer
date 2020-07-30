@@ -58,7 +58,7 @@ if [ $hardware -eq 1 ];	then
 	case $disableapt in
 		[Yy]* )
 		# disable regular apt-get functionality    
-        echo "${YELLOW}Disabling automatic apt-get activities.${SET}"
+        echo "${YELLOW}Disabling automatic apt-get activities.${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		# Stop running processes
 		sudo systemctl stop apt-daily.timer 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		sudo systemctl stop apt-daily-upgrade.timer 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
@@ -71,7 +71,7 @@ if [ $hardware -eq 1 ];	then
 		;;
 
 		[Nn]* )  
-		echo "${RED}Automatic apt-get is still enabled.  Please monitor your cellular data use carefully to avoid nasty charges.${SET}"
+		echo "${RED}Automatic apt-get is still enabled.  Please monitor your cellular data use carefully to avoid nasty charges.${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		break;;
 
 		*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
@@ -81,7 +81,7 @@ fi
 if [ $hardware -eq 1 ];	then
 	echo "${YELLOW}Installing Cellular Support${SET}"
 	case $modem in
-		1)    echo "${YELLOW}Installing Farm Jenny Libraries for HAT with BG96-based modem${SET}"
+		1)    echo "${YELLOW}Installing Farm Jenny Libraries for HAT with BG96-based modem${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 				cd Farm_Jenny_Installer
 				sudo python3 setup.py install 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
@@ -246,14 +246,19 @@ if [ $hardware -eq 1 ];	then
 		# tell the build process we're using an RCP over SPI so it installs the interface
 		echo "Adding RCP over SPI to OTBR_OPTIONS environment variable" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI"
+		# note that this export is limited in scope to this script
 		export OTBR_OPTIONS
 		printenv OTBR_OPTIONS 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Installing OTBR dependencies${SET}"
-		sudo ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-		
+		#source in the next line ensures the environment variable we just set is preserved
+		# see:  https://stackoverflow.com/questions/8352851/how-to-call-one-shell-script-from-another-shell-script
+
+		sudo source ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
 		echo "${YELLOW}Building OTBR${SET}"
-		sudo ./script/setup 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		#source in the next line ensures the environment variable we just set is preserved
+		sudo source ./script/setup 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Configuring OTBR to use the radio on the HAT${SET}"
 		# replace the otbr-agent default settings with correct OTBR_AGENT_OPTS
