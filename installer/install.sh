@@ -8,8 +8,8 @@ SET='\033[0m'
 # Set up logging ---------------------------------------------------------------
 mkdir -p /home/pi/farmjenny/logs
 touch /home/pi/farmjenny/logs/install.log
-echo "$(date) - Installing Farm Jenny HAT" &? /home/pi/farmjenny/logs/install.log
-lsb_release -a &? /home/pi/farmjenny/logs/install.log
+echo "$(date) - Installing Farm Jenny HAT" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+lsb_release -a 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 INSTALL_DIRECTORY="$(pwd)"
 
@@ -242,8 +242,12 @@ if [ $hardware -eq 1 ];	then
 		cd ot-br-posix
 		# check out a version ot OTBR we have tested
 		git checkout ad26882 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		
 		# tell the build process we're using an RCP over SPI so it installs the interface
-		export OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		echo "Adding RCP over SPI to OTBR_OPTIONS environment variable" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI"
+		export OTBR_OPTIONS
+		printenv OTBR_OPTIONS 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Installing OTBR dependencies${SET}"
 		sudo ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
@@ -274,8 +278,8 @@ fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 
 read -p "Press ENTER key to cleanup, reboot and start your device" ENTER
-sudo cd "${INSTALL_DIRECTORY}"
+cd ${INSTALL_DIRECTORY}
 sudo rm -r Farm_Jenny_Installer 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sudo rm -r install.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-echo "$(date) - Instal for Farm Jenny HAT finished." &? /home/pi/farmjenny/logs/install.log
+echo "$(date) - Instal for Farm Jenny HAT finished." 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 reboot
