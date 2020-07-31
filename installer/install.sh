@@ -243,22 +243,11 @@ if [ $hardware -eq 1 ];	then
 		# check out a version ot OTBR we have tested
 		git checkout ad26882 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		
-		# tell the build process we're using an RCP over SPI so it installs the interface
-		echo "Adding RCP over SPI to OTBR_OPTIONS environment variable" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-		OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI"
-		# note that this export is limited in scope to this script
-		export OTBR_OPTIONS
-		printenv OTBR_OPTIONS 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-
 		echo "${YELLOW}Installing OTBR dependencies${SET}"
-		#source in the next line ensures the environment variable we just set is preserved
-		# see:  https://stackoverflow.com/questions/8352851/how-to-call-one-shell-script-from-another-shell-script
+		sudo ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
-		source ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-
-		echo "${YELLOW}Building OTBR${SET}"
-		#source in the next line ensures the environment variable we just set is preserved
-		source ./script/setup 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		echo "${YELLOW}Building OTBR for SPI RCP Interface${SET}"
+		sudo OTBR_OPTIONS="-DOT_POSIX_CONFIG_RCP_BUS=SPI" ./script/setup 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 		echo "${YELLOW}Configuring OTBR to use the radio on the HAT${SET}"
 		# replace the otbr-agent default settings with correct OTBR_AGENT_OPTS
