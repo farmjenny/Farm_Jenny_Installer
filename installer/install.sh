@@ -12,6 +12,7 @@ echo "$(date) - Installing Farm Jenny HAT" 2>&1 | tee -a /home/pi/farmjenny/logs
 lsb_release -a 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 INSTALL_DIRECTORY="$(pwd)"
+MODEM_TYPE="NONE"
 
 # Bootstrapping ----------------------------------------------------------------
 echo "${YELLOW}Preparing for installation${SET}"
@@ -34,16 +35,18 @@ esac
 
 if [ $hardware -eq 1 ];	then
 
-	echo "${YELLOW}What cellular modem is installed in the HAT?:${SET}"
+	echo "${YELLOW}What cellular modem will be used with the HAT?:${SET}"
 	echo "${YELLOW}1: Nimbelink NL-SW-LTE-QBG96 (Quectel BG96)${SET}"
-	echo "${YELLOW}2: Other modem${SET}"
+	echo "${YELLOW}2: Nimbelink NL-SW-LTE-TC4NAG (Telit LE910C)${SET}"
 	echo "${YELLOW}3: None${SET}"
 	
 	read modem
 	case $modem in
 		1)    echo "${YELLOW}You selected Nimbelink NL-SW-LTE-QBG96, configuring for LTE-M with 2G Fallback${SET}"
+				MODEM_TYPE="bg96"
 				EXTRA='';;
-		2)    echo "${YELLOW}You selected Other modem, no extended settings to apply.${SET}"
+		2)    echo "${YELLOW}You selected Nimbelink NL-SW-LTE-TC4NAG, no extended settings to apply.${SET}"
+				MODEM_TYPE="le910c"
 				EXTRA='';;
 		3)    echo "${YELLOW}You indicated no cellular modem installed, skipping modem config -- rerun this installer if a modem is added later.${SET}"
 				EXTRA='';;
@@ -86,7 +89,11 @@ if [ $hardware -eq 1 ];	then
 				cd Farm_Jenny_Installer
 				sudo python3 setup.py install 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 				;;
-		2)    echo "${YELLOW}No libraries to install.${SET}";;
+		2)    echo "${YELLOW}Installing Farm Jenny Libraries for HAT with LE910C-based modem.${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+				cd Farm_Jenny_Installer
+				sudo python3 setup.py install 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+				;;
 		3)    echo "${YELLOW}No libraries to install.${SET}";;
 		*)    echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
@@ -115,8 +122,8 @@ if [ $hardware -eq 1 ];	then
 	sudo mv farmjenny_gpio.service /lib/systemd/system/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	sudo systemctl enable farmjenny_gpio.service 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
-	# Get the modem startup python utility
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_on.py -O modem_on.py
+	# Get the correct flavor of modem startup python utility
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_on.py -O modem_on.py
 	if [ $? -ne 0 ]; then
 		echo "${RED}Download failed${SET}"
 		exit 1;
@@ -138,9 +145,9 @@ if [ $hardware -eq 1 ];	then
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_shutdown.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
-	# Get the modem shutdown python utility
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/modem_off.py -O modem_off.py
-	if [ $? -ne 0 ]; then
+	# Get the correct flavor of modem shutdown python utility
+	
+	if [ $? -ne 0 ]; thenwget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_off.py -O modem_off.py
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
@@ -160,21 +167,21 @@ if [ $hardware -eq 1 ];	then
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-connect -O chat-connect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-connect -O chat-connect
 
 if [ $? -ne 0 ]; then
     echo "${RED}Download failed${SET}"
     exit 1; 
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/chat-disconnect -O chat-disconnect
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-disconnect -O chat-disconnect
 
 if [ $? -ne 0 ]; then
     echo "${RED}Download failed${SET}"
     exit 1;
 fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/provider -O provider
+wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/provider -O provider
 
 if [ $? -ne 0 ]; then
     echo "${RED}Download failed${SET}"
@@ -209,9 +216,6 @@ do
 	esac
 done
 
-echo "${YELLOW}What is your device communication PORT? (typ: ttyUSB3)${SET}"
-read devicename
-
 sudo rm -r /etc/chatscripts 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sudo mkdir -p /etc/chatscripts 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sed -i "/#EXTRA/d" chat-connect
@@ -222,7 +226,6 @@ mv chat-disconnect /etc/chatscripts/ 2>&1 | tee -a /home/pi/farmjenny/logs/insta
 sudo rm -r /etc/ppp/peers 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sudo mkdir -p /etc/ppp/peers 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sed -i "s/#APN/$carrierapn/" provider
-sed -i "s/#DEVICE/$devicename/" provider
 mv provider /etc/ppp/peers/provider 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
