@@ -439,18 +439,18 @@ class FarmJennyHatBg96:
 	def turnOnGNSS(self,active_ant = False):
 		if(active_ant == True):
 			#apply DC power to antenna
-			node.sendATComm("ATE0","OK\r\n")
-			node.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
-			node.sendATComm("AT+QCFG=\"gpio\",3,64,1,1","OK\r\n")
+			self.sendATComm("ATE0","OK\r\n")
+			self.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
+			self.sendATComm("AT+QCFG=\"gpio\",3,64,1,1","OK\r\n")
 
 	# Function for turning of GNSS (and turn off active antenna if so equipped)
 	def turnOffGNSS(self,active_ant = False):
 		if(active_ant == True):
 			#remove DC power to antenna to save power
-			node.sendATComm("ATE0","OK\r\n")
-			node.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
-			node.sendATComm("AT+QCFG=\"gpio\",3,64,0,1","OK\r\n")
-			
+			self.sendATComm("ATE0","OK\r\n")
+			self.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
+			self.sendATComm("AT+QCFG=\"gpio\",3,64,0,1","OK\r\n")
+
 		self.sendATComm("AT+QGPSEND","OK\r\n")		
 		# Note: AT+QGPS=1 fails if GPS is already enabled, so to be safe, always issue QGSPEND first
 		self.sendATComm("AT+QGPSEND","OK\r\n")
