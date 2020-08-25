@@ -654,6 +654,22 @@ class FarmJennyHatBg96:
 				debug_print("modem powered down")
 				return
 		debug_print("power down timed out.  Modem may be stuck.")
+
+	#******************************************************************************************
+	#*** HAT Peripheral Functions *************************************************************
+	#******************************************************************************************
+
+	# Function for reading user button (active low)
+	def readUserButton(self):
+		return GPIO.input(self.USER_BUTTON_N)
+
+	# Function for turning on user LED
+	def turnOnUserLED(self):
+		GPIO.output(self.USER_LED_N, 0)
+	
+	# Function for turning off user LED
+	def turnOffUserLED(self):
+		GPIO.output(self.USER_LED_N, 1)
 	
 ###########################################################################
 ### Farm Jenny LTE BR HAT + Nimbelink NL-SW-LTE-TC4NAG Modem Class ########
