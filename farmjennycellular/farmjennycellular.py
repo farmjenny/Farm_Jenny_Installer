@@ -443,10 +443,7 @@ class FarmJennyHatBg96:
 			self.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
 			self.sendATComm("AT+QCFG=\"gpio\",3,64,1,1","OK\r\n")
 
-		# Note: AT+QGPS=1 fails if GPS is already enabled, so to be safe, always issue QGSPEND first
-		self.sendATComm("AT+QGPSEND","OK\r\n")
-		delay(1000)
-		self.sendATComm("AT+QGPS=1","OK\r\n")
+		self.sendATCommOnce("AT+QGPS=1")
 
 	# Function for turning off GNSS (and turn off active antenna if so equipped)
 	def turnOffGNSS(self,active_ant = False):
@@ -456,7 +453,7 @@ class FarmJennyHatBg96:
 			self.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
 			self.sendATComm("AT+QCFG=\"gpio\",3,64,0,1","OK\r\n")
 
-		self.sendATComm("AT+QGPSEND","OK\r\n")		
+		self.sendATCommOnce("AT+QGPSEND")		
 
 	# Function for getting latitude
 	def getLatitude(self):
