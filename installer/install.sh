@@ -147,7 +147,7 @@ if [ $hardware -eq 1 ];	then
 
 	# Get the correct flavor of modem shutdown python utility
 	
-	if [ $? -ne 0 ]; thenwget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_off.py -O modem_off.py
+	if [ $? -ne 0 ]; then wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_off.py -O modem_off.py
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
