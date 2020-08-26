@@ -579,12 +579,16 @@ class FarmJennyHatBg96:
 		#timer = millis()
 		while 1:
 			self.response = ""
+			self.time_string = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
 				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
-					return self.response[0]
+					# this is the zeroth item, so it includes the AT command response too. Remove it.
+					self.time_string = self.response[0]
+					self.time_string = self.time_string.replace("QGPSLOC: ", "")
+					return Decimal(self.time_string)
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
