@@ -439,7 +439,6 @@ class FarmJennyHatBg96:
 	def turnOnGNSS(self,active_ant = False):
 		if(active_ant == True):
 			#apply DC power to antenna
-			self.sendATComm("ATE0","OK\r\n")
 			self.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
 			self.sendATComm("AT+QCFG=\"gpio\",3,64,1,1","OK\r\n")
 
@@ -449,7 +448,6 @@ class FarmJennyHatBg96:
 	def turnOffGNSS(self,active_ant = False):
 		if(active_ant == True):
 			#remove DC power to antenna to save power
-			self.sendATComm("ATE0","OK\r\n")
 			self.sendATComm("AT+QCFG=\"gpio\",1,64,1,0,0,1","OK\r\n")
 			self.sendATComm("AT+QCFG=\"gpio\",3,64,0,1","OK\r\n")
 
@@ -457,7 +455,6 @@ class FarmJennyHatBg96:
 
 	# Function for getting latitude
 	def getLatitude(self):
-		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
 		#timer = millis()
 		while 1:
@@ -475,7 +472,6 @@ class FarmJennyHatBg96:
 	
 	# Function for getting longitude		
 	def getLongitude(self):
-		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
 		#timer = millis()
 		while 1:
@@ -490,10 +486,26 @@ class FarmJennyHatBg96:
 					debug_print(self.response)
 					ser.close()
 					return 0
+
+	# Function for getting altitude in meters, accurate to one decimal place		
+	def getAltitudeM(self):
+		self.sendATCommOnce("AT+QGPSLOC=2")
+		#timer = millis()
+		while 1:
+			self.response = ""
+			while(ser.inWaiting()):
+				self.response += ser.readline().decode('utf-8')
+				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+					self.response = self.response.split(",")
+					ser.close()
+					return Decimal(self.response[4])
+				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
+					debug_print(self.response)
+					ser.close()
+					return 0
 	
 	# Function for getting speed in MPH			
 	def getSpeedMph(self):
-		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
 		#timer = millis()
 		while 1:
@@ -511,7 +523,6 @@ class FarmJennyHatBg96:
 	
 	# Function for getting speed in KPH			
 	def getSpeedKph(self):
-		self.sendATComm("ATE0","OK\r\n")
 		self.sendATCommOnce("AT+QGPSLOC=2")
 		#timer = millis()
 		while 1:
@@ -527,10 +538,74 @@ class FarmJennyHatBg96:
 					ser.close()
 					return 0
 
-	# Function for getting fixed location 
-	def getFixedLocation(self):
-		return self.sendATComm("AT+QGPSLOC?","+QGPSLOC:")
+	# Function for getting a crude estimation of location accuracy in meters, based on GPGGA HDOP value.
+	def getPositionAccuracyM(self):
+		self.sendATCommOnce("AT+QGPSLOC=2")
+		#timer = millis()
+		while 1:
+			self.response = ""
+			while(ser.inWaiting()):
+				self.response += ser.readline().decode('utf-8')
+				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+					self.response = self.response.split(",")
+					ser.close()
+					# The constant below is an estimate of the nominal accuracy of the device with HDOP=1.0
+					return round(Decimal(self.response[3])*Decimal('5.0'), 0)
+				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
+					debug_print(self.response)
+					ser.close()
+					return 0
+	
+	# Function for getting the total number of supported GNSS satellites in view.
+	def getNumSatellites(self):
+		self.sendATCommOnce("AT+QGPSLOC=2")
+		#timer = millis()
+		while 1:
+			self.response = ""
+			while(ser.inWaiting()):
+				self.response += ser.readline().decode('utf-8')
+				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+					self.response = self.response.split(",")
+					ser.close()
+					return Decimal(self.response[10])
+				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
+					debug_print(self.response)
+					ser.close()
+					return 0
+	
+	# Function for getting time from the GNSS satellite reciever, format is hhmmss.sss (UTC)
+	def getGnssTime(self):
+		self.sendATCommOnce("AT+QGPSLOC=2")
+		#timer = millis()
+		while 1:
+			self.response = ""
+			while(ser.inWaiting()):
+				self.response += ser.readline().decode('utf-8')
+				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+					self.response = self.response.split(",")
+					ser.close()
+					return Decimal(self.response[0])
+				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
+					debug_print(self.response)
+					ser.close()
+					return 0
 
+	# Function for getting date from the GNSS satellite reciever, format is ddmmyy (UTC)
+	def getGnssDate(self):
+		self.sendATCommOnce("AT+QGPSLOC=2")
+		#timer = millis()
+		while 1:
+			self.response = ""
+			while(ser.inWaiting()):
+				self.response += ser.readline().decode('utf-8')
+				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+					self.response = self.response.split(",")
+					ser.close()
+					return Decimal(self.response[9])
+				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
+					debug_print(self.response)
+					ser.close()
+					return 0
 	#******************************************************************************************
 	#*** TCP & UDP Protocols Functions ********************************************************
 	#******************************************************************************************
