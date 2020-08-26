@@ -567,7 +567,7 @@ class FarmJennyHatBg96:
 				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
-					return Decimal(self.response[10])
+					return self.response[10]
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
@@ -584,7 +584,7 @@ class FarmJennyHatBg96:
 				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
-					return Decimal(self.response[0])
+					return self.response[0]
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
@@ -601,7 +601,7 @@ class FarmJennyHatBg96:
 				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
-					return Decimal(self.response[9])
+					return self.response[9]
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
