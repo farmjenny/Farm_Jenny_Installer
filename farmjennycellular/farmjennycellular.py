@@ -39,11 +39,11 @@ def dm2dec_lat(dm_reading):
 	if len(dm_reading) != 10:
 		return 0
 	degree = dm_reading[0:2]
-    minutes = dm_reading[3:10]
-    direction = dm_reading[10:]
-    sign = -1 if (direction == "S") else 1
-    dec = round( sign * ( Decimal(degree) + Decimal(minutes) / Decimal("60") ),6)
-    return dec
+	minutes = dm_reading[3:10]
+	direction = dm_reading[10:]
+	sign = -1 if (direction == "S") else 1
+	dec = round( sign * ( Decimal(degree) + Decimal(minutes) / Decimal("60") ),6)
+	return dec
 
 def dm2dec_long(dm_reading):
 	#convert a degrees-minutes longitude reading into signed decimal
@@ -51,11 +51,11 @@ def dm2dec_long(dm_reading):
 	if len(dm_reading) != 11:
 		return 0
 	degree = dm_reading[0:2]
-    minutes = dm_reading[3:10]
-    direction = dm_reading[10:]
-    sign = -1 if ( direction == "W" ) else 1
-    dec = round( sign * ( Decimal(degree) + Decimal(minutes) / Decimal("60") ),6)
-    return dec
+	minutes = dm_reading[3:10]
+	direction = dm_reading[10:]
+	sign = -1 if ( direction == "W" ) else 1
+	dec = round( sign * ( Decimal(degree) + Decimal(minutes) / Decimal("60") ),6)
+	return dec
 
 ###############################################
 ### Farm Jenny Test Class #####################
@@ -1109,7 +1109,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5]) == "1"):
 						return "NaN"
 					#This GPS outputs latitude in ddmmm.mmmmN/S format.  Convert to signed decimal
 					return dm2dec_lat(self.response[1])
@@ -1129,7 +1129,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					#This GPS outputs longitude in dddmmm.mmmmE/W format.  Convert to signed decimal
 					return dm2dec_long(self.response[2])
@@ -1149,7 +1149,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					return Decimal(self.response[4])
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
@@ -1168,7 +1168,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					return round(Decimal(self.response[7])/Decimal('1.609344'), 1)
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
@@ -1187,7 +1187,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					return Decimal(self.response[7])
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
@@ -1206,7 +1206,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					# The constant below is an estimate of the nominal accuracy of the device with HDOP=1.0
 					return round(Decimal(self.response[3])*Decimal('5.0'), 0)
@@ -1226,7 +1226,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					# because this includes the final item in the array, it includes a bunch of garbage after the value
 					# <nsat_glonass> is always two characters 00 thru 12, trim everything else
@@ -1250,7 +1250,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					# this is the zeroth item, so it includes the AT command response too. Remove it.
 					self.time_string = self.response[0]
@@ -1272,7 +1272,7 @@ class FarmJennyHatLe910c:
 					self.response = self.response.split(",")
 					ser.close()
 					#If no fix (0 or 1), return "NaN"
-					if( (self.response[5] == "0") or (self.response[5] == "1"):
+					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NaN"
 					return self.response[9]
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
