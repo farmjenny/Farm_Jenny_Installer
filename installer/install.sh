@@ -108,7 +108,7 @@ if [ $hardware -eq 1 ];	then
 		exit 1;
 	fi
 	# copy file to correct location
-	mkdir /usr/local/bin/farmjenny 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sudo mkdir -p /usr/local/bin/farmjenny 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	sudo mv farmjenny_gpio.sh /usr/local/bin/farmjenny/farmjenny_gpio.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_gpio.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
@@ -146,8 +146,8 @@ if [ $hardware -eq 1 ];	then
 	sudo chmod +x /usr/local/bin/farmjenny/farmjenny_shutdown.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 	# Get the correct flavor of modem shutdown python utility
-	
-	if [ $? -ne 0 ]; then wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_off.py -O modem_off.py
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_off.py -O modem_off.py
+	if [ $? -ne 0 ]; then 
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
