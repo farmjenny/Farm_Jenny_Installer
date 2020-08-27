@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='fj_farmjennycellular',
-    version='0.4.9',
+    version='0.4.10',
     author='Rob Crouthamel',
     author_email='rob@farmjenny.com',
     description='farm jenny cellular python libraries',
     license='MIT',
     url='https://github.com/farmjenny/Farm_Jenny_Installer',
-	install_requires  = ['RPi.GPIO', 'pyserial', 're'],
+	install_requires  = ['RPi.GPIO', 'pyserial'],
     packages=find_packages()
 )
