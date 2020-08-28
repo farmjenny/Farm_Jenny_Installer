@@ -164,6 +164,28 @@ if [ $hardware -eq 1 ];	then
 	fi
 	sudo mv farmjenny_shutdown.service /lib/systemd/system/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	sudo systemctl enable farmjenny_shutdown.service 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of modem gnss_enable python utility
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/gnss_enable.py -O gnss_enable.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv gnss_enable.py /usr/local/bin/farmjenny/gnss_enable.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/gnss_enable.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of modem gnss_query python utility
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/gnss_query.py -O gnss_query.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv gnss_query.py /usr/local/bin/farmjenny/gnss_query.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/gnss_query.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"

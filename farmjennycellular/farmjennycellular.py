@@ -754,6 +754,7 @@ class FarmJennyHatBg96:
 	def powerDownAT(self):
 		self.sendATComm("ATE0","OK\r\n")
 		# Deregister from the network (within 60 seconds and power down)
+		# This command doesn't return until powerdown is complete, so no timer required
 		self.sendATComm("AT+QPOWD=1","POWERED DOWN\r\n", 60000)
 
 	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using On/off Line (Hardware)
@@ -768,6 +769,7 @@ class FarmJennyHatBg96:
 			if self.getModemStatus():
 				debug_print("modem still on")
 				i += 1
+				delay(1000)
 			else:
 				debug_print("modem powered down")
 				return
@@ -865,7 +867,7 @@ class FarmJennyHatLe910c:
 			pass
 		debug_print("modem powered up!")
 		GPIO.output(self.MDM_ON_OFF,0)
-	
+
 	# Function for getting modem power status
 	def getModemStatus(self):
 		# Modem status pin state is undefined if modem VCC is not powered.  Return 1 if modem is disabled.
@@ -1328,7 +1330,18 @@ class FarmJennyHatLe910c:
 	def powerDownAT(self):
 		self.sendATComm("ATE0","OK\r\n")
 		# Deregister from the network (within 25 seconds according to LE910 datasheet) and power down
-		self.sendATComm("AT#SHDN","OK\r\n", 30000)
+		self.sendATComm("AT#SHDN","OK\r\n", 1000)
+		# Modem returns OK immediately, watch power line 1/sec to see when it is done
+		i = 0
+		while i < 30: 
+			if self.getModemStatus():
+				debug_print("modem still on")
+				i += 1
+				delay(1000)
+			else:
+				debug_print("modem powered down")
+				return
+		debug_print("power down timed out.  Modem may be stuck.")
 
 	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using On/off Line (Hardware)
 	def powerDownHW(self):
@@ -1338,10 +1351,11 @@ class FarmJennyHatLe910c:
 		GPIO.output(self.MDM_ON_OFF,0)
 		debug_print("power down requested.  NOTE: This can take up to 25 seconds to complete.")
 		i = 0
-		while i < 60: 
+		while i < 30: 
 			if self.getModemStatus():
 				debug_print("modem still on")
 				i += 1
+				delay(1000)
 			else:
 				debug_print("modem powered down")
 				return
@@ -1362,3 +1376,15 @@ class FarmJennyHatLe910c:
 	# Function for turning off user LED
 	def turnOffUserLED(self):
 		GPIO.output(self.USER_LED_N, 1)
+
+	# Function for setting ON/nSLEEP (Blue LED) behavior for power monitoring and save it
+	def setLedPower(self):
+		self.sendATCommOnce("AT#SLED=1")
+		self.sendATCommOnce("AT#SLEDSAV")
+	
+	# Function for setting ON/nSLEEP (Blue LED) behavior for network status and save it
+	def setLedNetwork(self):
+		self.sendATCommOnce("AT#SLED=2")
+		self.sendATCommOnce("AT#SLEDSAV")
+		
+	

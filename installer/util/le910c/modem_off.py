@@ -20,7 +20,6 @@ if node.getModemStatus() == 0:
         print("modem not responding on AT interface")
         pass
 
-time.sleep(5)
 # plan B if that didn't work . . .
 if node.getModemStatus() == 0:
     print("modem STILL powered -- use power button")

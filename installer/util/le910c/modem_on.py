@@ -20,7 +20,7 @@ if node.getModemStatus() == 0:
         print("modem not responding on AT interface")
         pass
 
-time.sleep(5)
+time.sleep(1)
 
 if node.getModemStatus() == 0:
     print("modem STILL powered -- use power button")
@@ -28,18 +28,23 @@ if node.getModemStatus() == 0:
 
 time.sleep(1)
 
-# powerup the modem using the Farm Jenny API
+# cut power and delay to allow USB devices to clear
 node.disable()
-# delay to allow USB devices to clear
 time.sleep(5)
+# apply power and wait for it to stabilize
 node.enable()
 time.sleep(1)
+# the powerUp command watches for a transition on the ON/nSLEEP pin (typ 20 sec)
 node.powerUp()
 time.sleep(1)
+# query modem info
 node.getIMEI()
 node.getFirmwareInfo()
 node.getHardwareInfo()
 node.getManufacturerInfo()
+
+# set ON/nSLEEP (Blue LED) behavior for power monitoring (default is NW status)
+node.setLedPower()
 
 # release the UserLED from PWM use (but leave all other GPIO as set)
 p.stop()
