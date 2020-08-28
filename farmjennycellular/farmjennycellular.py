@@ -1255,10 +1255,10 @@ class FarmJennyHatLe910c:
 					# this is the zeroth item, so it includes the AT command response etc.
 					# Time value is in hhmmss.sss format, so just keep the last 10 characters
 					self.time_string = self.response[0]
-					print("full time string:", self.time_string)
-					self.time_string = self.time_string[-10:]
-					print("trimmed time string:", self.time_string)
-					return Decimal(self.time_string)
+					#print("full time string:", self.time_string)
+					#self.time_string = self.time_string[-10:]
+					#print("trimmed time string:", self.time_string)
+					return Decimal(self.time_string[-10:])
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
