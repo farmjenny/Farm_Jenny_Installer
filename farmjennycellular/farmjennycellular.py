@@ -1252,10 +1252,11 @@ class FarmJennyHatLe910c:
 					#If no fix (0 or 1), return "NOFIX"
 					if( (self.response[5] == "0") or (self.response[5] == "1") ):
 						return "NOFIX"
-					# this is the zeroth item, so it includes the AT command response too. Remove it.
+					# this is the zeroth item, so it includes the AT command response etc.
+					# Time value is in hhmmss.sss format, so just keep the last 10 characters
 					self.time_string = self.response[0]
 					print("full time string:", self.time_string)
-					self.time_string = self.time_string.replace("$GPSACP: ", "")
+					self.time_string = self.time_string[-10:]
 					print("trimmed time string:", self.time_string)
 					return Decimal(self.time_string)
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
