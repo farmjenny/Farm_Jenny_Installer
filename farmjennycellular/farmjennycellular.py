@@ -766,7 +766,8 @@ class FarmJennyHatBg96:
 		debug_print("power down requested.  NOTE: This can take up to 60 seconds to complete.")
 		i = 0
 		while i < 60: 
-			if self.getModemStatus():
+			# NOTE:  getModemStatus returns 1 when modem is OFF
+			if not self.getModemStatus():
 				debug_print("modem still on")
 				i += 1
 				delay(1000)
@@ -1334,7 +1335,8 @@ class FarmJennyHatLe910c:
 		# Modem returns OK immediately, watch power line 1/sec to see when it is done
 		i = 0
 		while i < 30: 
-			if self.getModemStatus():
+			# NOTE:  getModemStatus returns 1 when modem is OFF
+			if not self.getModemStatus():
 				debug_print("modem still on")
 				i += 1
 				delay(1000)
@@ -1352,7 +1354,8 @@ class FarmJennyHatLe910c:
 		debug_print("power down requested.  NOTE: This can take up to 25 seconds to complete.")
 		i = 0
 		while i < 30: 
-			if self.getModemStatus():
+			# NOTE:  getModemStatus returns 1 when modem is OFF
+			if not self.getModemStatus():
 				debug_print("modem still on")
 				i += 1
 				delay(1000)
