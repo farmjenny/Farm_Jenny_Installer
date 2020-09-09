@@ -21,10 +21,10 @@ sudo apt-get --assume-yes upgrade
 sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 # Confirm git install was successful (Ref: BR-100)
-if ! command -v git &> /dev/null
-then
-    echo "${RED}git could not be found${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log 
-    exit 1
+git --version 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+if [ $? -ne 0 ]; then
+    echo "${RED}Git Not Installed. Exiting..${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+    exit 1;
 fi
 
 # User input
