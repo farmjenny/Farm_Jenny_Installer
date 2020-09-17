@@ -215,6 +215,17 @@ if [ $hardware -eq 1 ];	then
 	sudo mv opr.py /usr/local/bin/farmjenny/opr.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/opr.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of led blinking python utility (led_blink_ten.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/led_blink_ten.py -O led_blink_ten.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv led_blink_ten.py /usr/local/bin/farmjenny/led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
