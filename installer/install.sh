@@ -20,6 +20,13 @@ sudo apt-get --assume-yes update
 sudo apt-get --assume-yes upgrade
 sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
+# Confirm git install was successful (Ref: BR-100)
+git --version 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+if [ $? -ne 0 ]; then
+    echo "${RED}Git Not Installed. Exiting..${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+    exit 1;
+fi
+
 # User input
 
 echo "${YELLOW}Select the Farm Jenny hardware to install:${SET}"
@@ -288,7 +295,7 @@ if [ $hardware -eq 1 ];	then
         	sudo git clone  https://github.com/openthread/ot-br-posix.git 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		cd ot-br-posix
 		# check out a version ot OTBR we have tested
-		git checkout ad26882 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		git checkout ea9cd69 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		
 		echo "${YELLOW}Installing OTBR dependencies${SET}"
 		sudo ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
@@ -322,5 +329,5 @@ read -p "Press ENTER key to cleanup, reboot and start your device" ENTER
 cd ${INSTALL_DIRECTORY}
 sudo rm -r Farm_Jenny_Installer 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 sudo rm -r install.sh 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-echo "$(date) - Instal for Farm Jenny HAT finished." 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+echo "$(date) - Install for Farm Jenny HAT finished." 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 reboot
