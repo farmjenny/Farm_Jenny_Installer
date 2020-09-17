@@ -186,6 +186,28 @@ if [ $hardware -eq 1 ];	then
 	sudo mv gnss_query.py /usr/local/bin/farmjenny/gnss_query.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/gnss_query.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of modem signal retrieval python utility (sig.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/sig.py -O sig.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv sig.py /usr/local/bin/farmjenny/sig.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/sig.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of modem operator retrieval python utility (opr.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/opr.py -O opr.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv opr.py /usr/local/bin/farmjenny/opr.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/opr.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
