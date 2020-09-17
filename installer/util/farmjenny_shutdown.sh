@@ -12,4 +12,4 @@ echo "$(date) - Deactivating network and powering modem down -- may take 60 seco
 sudo /usr/bin/python3 /usr/local/bin/farmjenny/modem_off.py
 
 echo "$(date) - Cleaning up watchdog files..." >> /home/pi/farmjenny/logs/shutdownlog.txt
-sudo rm /home/pi/.run-*.sh || true
+sudo rm /home/pi/farmjenny/.run-*.sh || true
