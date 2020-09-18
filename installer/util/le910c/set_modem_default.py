@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from farmjennycellular import FarmJennyHatBg96
+from farmjennycellular import farmjennycellular
 import time
 
 # Modem configuration to connect using any technology or carrier
