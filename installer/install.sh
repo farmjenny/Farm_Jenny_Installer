@@ -216,16 +216,38 @@ if [ $hardware -eq 1 ];	then
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/opr.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
-	# Get the correct flavor of led blinking python utility (led_blink_ten.py)
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/led_blink_ten.py -O led_blink_ten.py
+	# Get the correct flavor of led blinking python utility (user_led_blink_ten.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/user_led_blink_ten.py -O user_led_blink_ten.py
 	if [ $? -ne 0 ]; then
 		echo "${RED}Download failed${SET}"
 		exit 1;
 	fi
 	# copy file to correct location
-	sudo mv led_blink_ten.py /usr/local/bin/farmjenny/led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sudo mv user_led_blink_ten.py /usr/local/bin/farmjenny/user_led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sudo chmod +x /usr/local/bin/farmjenny/user_led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of user led ON python utility (user_led_on.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/user_led_on.py -O user_led_on.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv user_led_on.py /usr/local/bin/farmjenny/user_led_on.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/user_led_on.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of user led OFF python utility (user_led_off.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/user_led_off.py -O user_led_off.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv user_led_off.py /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 	# Get the correct flavor of set modem default (set_modem_default.py)
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/set_modem_default.py -O set_modem_default.py
