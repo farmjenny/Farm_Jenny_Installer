@@ -1,5 +1,8 @@
 # Farm_Jenny_Installer
 This script will install the required utilities and configure your Linux Single Board Computer (Pi) to correctly operate your Farm Jenny hardware.  It is intended for novice users.  Expert users may want to inspect the steps performed by the script and tailor the install to suit their specific requirements.
+
+For step-by-step instructions, please follow the [Quick Start Guide for the Farm Jenny LTE Border Router HAT](https://github.com/farmjenny/FarmJenny_LTE_Border_Router_HAT/wiki/Quick-Start-Guide-for-the-Farm-Jenny-LTE-Border-Router-Hat).
+
 ## Instructions
 1.  Download the installer:
 
