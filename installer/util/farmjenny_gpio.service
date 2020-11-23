@@ -1,6 +1,6 @@
 [Unit]
 Description=farmjenny_gpio
-After=network.target
+After=sysinit.target
 ConditionPathExists=/usr/local/bin/farmjenny
 
 [Service]

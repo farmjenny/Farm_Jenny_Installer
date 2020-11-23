@@ -339,7 +339,7 @@ if [ $hardware -eq 1 ];	then
         	sudo git clone  https://github.com/openthread/ot-br-posix.git 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		cd ot-br-posix
 		# check out a version ot OTBR we have tested
-		git checkout ea9cd69 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+		git checkout 6d49606 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 		
 		echo "${YELLOW}Installing OTBR dependencies${SET}"
 		sudo ./script/bootstrap 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
