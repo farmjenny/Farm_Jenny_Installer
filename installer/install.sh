@@ -259,6 +259,17 @@ if [ $hardware -eq 1 ];	then
 	sudo mv set_modem_default.py /usr/local/bin/farmjenny/set_modem_default.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/set_modem_default.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	
+	# Get the correct flavor of the button and led test routine (buttonledtest.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/buttonledtest.py -O buttonledtest.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv buttonledtest.py /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 fi
 
 echo "${YELLOW}Downloading chatscript templates${SET}"
