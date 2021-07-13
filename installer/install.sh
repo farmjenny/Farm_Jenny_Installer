@@ -389,11 +389,10 @@ if [ $hardware -eq 1 ];	then
 	esac
 fi
 
-if [ $modem -eq "bg95" ];	then
+if [ $modem -eq 3 ];	then
 	echo "${RED}WARNING:  You selected a Quectel BG95 modem - a suitable driver may not be included with your linux distro.${SET}"
 	echo "${RED}With modem powered, if '>ls /dev/ttyUSB*' does not return multiple devices (e.g., ttyUSB0-ttyUSB4), you may need to install a driver.${SET}"
 	echo "${RED}See https://github.com/farmjenny/FarmJenny_LTE_Border_Router_HAT/wiki/Quectel-BG95-Linux-Driver for more information.${SET}"
-	;
 fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 

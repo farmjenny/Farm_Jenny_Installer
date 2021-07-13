@@ -855,7 +855,7 @@ class FarmJennyHatBg95:
 	CTRL_Z = '\x1A'
 	
 	# Initializer function
-	def __init__(self, serial_port="/dev/ttyS0", serial_baudrate=115200, board="LTE Border Router HAT with BG96", rtscts=False, dsrdtr=False):
+	def __init__(self, serial_port="/dev/ttyS0", serial_baudrate=115200, board="LTE Border Router HAT with BG95", rtscts=False, dsrdtr=False):
 		self.board = board
 		ser.port = serial_port
 		ser.baudrate = serial_baudrate
