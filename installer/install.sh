@@ -45,7 +45,8 @@ if [ $hardware -eq 1 ];	then
 	echo "${YELLOW}What cellular modem will be used with the HAT?:${SET}"
 	echo "${YELLOW}1: Nimbelink NL-SW-LTE-QBG96 (Quectel BG96)${SET}"
 	echo "${YELLOW}2: Nimbelink NL-SW-LTE-TC4NAG (Telit LE910C)${SET}"
-	echo "${YELLOW}3: None${SET}"
+	echo "${YELLOW}3: Nimbelink NL-SW-LTE-QBG95 or QBG95-B (Quectel BG95-M3)${SET}"
+	echo "${YELLOW}9: None${SET}"
 	
 	read modem
 	case $modem in
@@ -55,7 +56,11 @@ if [ $hardware -eq 1 ];	then
 		2)    echo "${YELLOW}You selected Nimbelink NL-SW-LTE-TC4NAG, no extended settings to apply.${SET}"
 				MODEM_TYPE="le910c"
 				EXTRA='';;
-		3)    echo "${YELLOW}You indicated no cellular modem installed, skipping modem config -- rerun this installer if a modem is added later.${SET}"
+		3)    echo "${YELLOW}You selected Nimbelink NL-SW-LTE-QBG95, configuring for LTE-M with 2G Fallback${SET}"
+				echo "${RED}WARNING: A driver for this modem may not be included in your linux distro. ${SET}"
+				MODEM_TYPE="bg95"
+				EXTRA='';;		
+		9)    echo "${YELLOW}You indicated no cellular modem installed, skipping modem config -- rerun this installer if a modem is added later.${SET}"
 				EXTRA='';;
 		*) 	  echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
@@ -101,7 +106,12 @@ if [ $hardware -eq 1 ];	then
 				cd Farm_Jenny_Installer
 				sudo python3 setup.py install 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 				;;
-		3)    echo "${YELLOW}No libraries to install.${SET}";;
+		3)    echo "${YELLOW}Installing Farm Jenny Libraries for HAT with BG95-based modem${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+				git clone https://github.com/farmjenny/Farm_Jenny_Installer.git 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+				cd Farm_Jenny_Installer
+				sudo python3 setup.py install 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+				;;		
+		9)    echo "${YELLOW}No libraries to install.${SET}";;
 		*)    echo "${RED}Sorry, I don't understand. Bye!${SET}"; exit 1;
 	esac
 fi
@@ -377,6 +387,13 @@ if [ $hardware -eq 1 ];	then
 		[Nn]* )  break;;
 		*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
 	esac
+fi
+
+if [ $modem -eq "bg95" ];	then
+	echo "${RED}WARNING:  You selected a Quectel BG95 modem - a suitable driver may not be included with your linux distro.${SET}"
+	echo "${RED}With modem powered, if '>ls /dev/ttyUSB*' does not return multiple devices (e.g., ttyUSB0-ttyUSB4), you may need to install a driver.${SET}"
+	echo "${RED}See https://github.com/farmjenny/FarmJenny_LTE_Border_Router_HAT/wiki/Quectel-BG95-Linux-Driver for more information.${SET}"
+	;
 fi
 
 echo "${YELLOW}Farm Jenny installation is complete.  Use ${BLUE}\"sudo pon\"${YELLOW} to connect and ${BLUE}\"sudo poff\"${YELLOW} to disconnect.${SET}" 

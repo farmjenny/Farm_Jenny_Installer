@@ -3,7 +3,7 @@ from farmjennycellular import farmjennycellular
 import time
 import RPi.GPIO as GPIO
 
-node = farmjennycellular.FarmJennyHatBg96(serial_port="/dev/ttyUSB2")
+node = farmjennycellular.FarmJennyHatBg95(serial_port="/dev/ttyUSB2")
 node.setupGPIO()
 # fast blink the UserLED
 node.turnOffUserLED()
@@ -11,9 +11,9 @@ GPIO.setup(node.USER_LED_N, GPIO.OUT)
 p = GPIO.PWM(node.USER_LED_N,2)
 p.start(50)
 
-# if the modem is already on, try to gracefully disconnect first
+# if the modem is on, try to gracefully disconnect first
 if node.getModemStatus() == 0:
-    print("modem already powered -- attempt disconnect first")
+    print("modem appears powered -- attempt disconnect first using AT interface")
     try:
         node.powerDownAT()
     except:
@@ -21,28 +21,14 @@ if node.getModemStatus() == 0:
         pass
 
 time.sleep(5)
-
+# plan B if that didn't work . . .
 if node.getModemStatus() == 0:
     print("modem STILL powered -- use power button")
     node.powerDownHW()
 
 time.sleep(1)
-
-# powerup the modem using the Farm Jenny API
+# cut power to the modem using the Farm Jenny API
 node.disable()
-# delay to allow USB devices to clear
-time.sleep(5)
-node.enable()
-time.sleep(1)
-node.powerUp()
-time.sleep(1)
-node.getIMEI()
-node.getIMSI()
-node.getICCID()
-node.getFirmwareInfo()
-node.getHardwareInfo()
-node.getManufacturerInfo()
-
 # release the UserLED from PWM use (but leave all other GPIO as set)
 p.stop()
 GPIO.cleanup(node.USER_LED_N)
