@@ -10,6 +10,8 @@ node.turnOffUserLED()
 GPIO.setup(node.USER_LED_N, GPIO.OUT)
 p = GPIO.PWM(node.USER_LED_N,2)
 p.start(50)
+# debug out the raw gnss output
+node.sendATCommOnce("AT+QGPSLOC=2")
 
 print("Latitude: ", node.getLatitude())
 print("Longitude: ", node.getLongitude())
