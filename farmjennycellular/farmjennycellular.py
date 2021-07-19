@@ -614,7 +614,7 @@ class FarmJennyHatBg96:
 					ser.close()
 					# this is the zeroth item, so it includes the AT command response too. Remove it.
 					self.time_string = self.response[0]
-					self.time_string = self.time_string.replace("QGPSLOC: ", "")
+					self.time_string = self.time_string.replace("+QGPSLOC: ", "")
 					return Decimal(self.time_string)
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
@@ -1338,7 +1338,7 @@ class FarmJennyHatBg95:
 					ser.close()
 					# this is the zeroth item, so it includes the AT command response too. Remove it.
 					self.time_string = self.response[0]
-					self.time_string = self.time_string.replace("QGPSLOC: ", "")
+					self.time_string = self.time_string.replace("+QGPSLOC: ", "")
 					return Decimal(self.time_string)
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
