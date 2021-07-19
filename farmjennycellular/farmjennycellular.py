@@ -491,7 +491,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[1])
@@ -507,7 +507,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[2])
@@ -523,7 +523,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[4])
@@ -539,7 +539,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return round(Decimal(self.response[7])/Decimal('1.609344'), 1)
@@ -555,7 +555,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[7])
@@ -571,7 +571,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					# The constant below is an estimate of the nominal accuracy of the device with HDOP=1.0
@@ -589,13 +589,13 @@ class FarmJennyHatBg96:
 			self.nsat = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					# because this is the final item in the array, it includes a bunch of garbage after the value
 					# <nsat> is always two characters 00 thru 12, trim everything else
 					self.nsat = self.response[10]
-					return self.nsat[0:1]
+					return self.nsat[0:2]
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
@@ -609,7 +609,7 @@ class FarmJennyHatBg96:
 			self.time_string = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					# this is the zeroth item, so it includes the AT command response too. Remove it.
@@ -628,7 +628,7 @@ class FarmJennyHatBg96:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return self.response[9]
@@ -1215,7 +1215,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[1])
@@ -1231,7 +1231,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[2])
@@ -1247,7 +1247,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[4])
@@ -1263,7 +1263,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return round(Decimal(self.response[7])/Decimal('1.609344'), 1)
@@ -1279,7 +1279,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return Decimal(self.response[7])
@@ -1295,7 +1295,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					# The constant below is an estimate of the nominal accuracy of the device with HDOP=1.0
@@ -1313,13 +1313,13 @@ class FarmJennyHatBg95:
 			self.nsat = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					# because this is the final item in the array, it includes a bunch of garbage after the value
 					# <nsat> is always two characters 00 thru 12, trim everything else
 					self.nsat = self.response[10]
-					return self.nsat[0:1]
+					return self.nsat[0:2]
 				if(self.response.find("\r\n") != -1 and self.response.find("ERROR") != -1 ):
 					debug_print(self.response)
 					ser.close()
@@ -1333,7 +1333,7 @@ class FarmJennyHatBg95:
 			self.time_string = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					# this is the zeroth item, so it includes the AT command response too. Remove it.
@@ -1352,7 +1352,7 @@ class FarmJennyHatBg95:
 			self.response = ""
 			while(ser.inWaiting()):
 				self.response += ser.readline().decode('utf-8')
-				if( self.response.find("QGPSLOC") != -1 and self.response.find("OK") != -1 ):
+				if( self.response.find("+QGPSLOC: ") != -1 and self.response.find("OK") != -1 ):
 					self.response = self.response.split(",")
 					ser.close()
 					return self.response[9]
