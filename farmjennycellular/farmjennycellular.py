@@ -752,7 +752,7 @@ class FarmJennyHatBg96:
 		
 	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using AT commands (preferred)
 	def powerDownAT(self):
-		self.sendATComm("ATE0","OK\r\n")
+		self.sendATComm("ATE0","OK\r\n", 1000)
 		# Deregister from the network (within 60 seconds and power down)
 		# This command doesn't return until powerdown is complete, so no timer required
 		self.sendATComm("AT+QPOWD=1","POWERED DOWN\r\n", 60000)
@@ -1476,7 +1476,7 @@ class FarmJennyHatBg95:
 		
 	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using AT commands (preferred)
 	def powerDownAT(self):
-		self.sendATComm("ATE0","OK\r\n")
+		self.sendATComm("ATE0","OK\r\n", 1000)
 		# Deregister from the network (within 60 seconds and power down)
 		# This command doesn't return until powerdown is complete, so no timer required
 		self.sendATComm("AT+QPOWD=1","POWERED DOWN\r\n", 60000)
@@ -2053,7 +2053,7 @@ class FarmJennyHatLe910c:
 		
 	# Function for disconnecting (Deregistering) from the cell network and powering down gracefully using AT commands (preferred)
 	def powerDownAT(self):
-		self.sendATComm("ATE0","OK\r\n")
+		self.sendATComm("ATE0","OK\r\n", 1000)
 		# Deregister from the network (within 25 seconds according to LE910 datasheet) and power down
 		self.sendATComm("AT#SHDN","OK\r\n", 1000)
 		# Modem returns OK immediately, watch power line 1/sec to see when it is done
