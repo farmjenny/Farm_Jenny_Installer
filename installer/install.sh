@@ -172,7 +172,16 @@ if [ $hardware -eq 1 ];	then
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
-
+	# Get the correct flavor of the button and led test routine (buttonledtest.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/common/buttonledtest.py -O buttonledtest.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv buttonledtest.py /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 fi
 
 # MODEM-ONLY SETUP -- SKIP IF A MODEM ISN'T INSTALLED ....
@@ -274,17 +283,6 @@ if [ $hardware -eq 1 ] && [ $modem -ne 9 ];	then
 	sudo mv set_modem_default.py /usr/local/bin/farmjenny/set_modem_default.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/set_modem_default.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-	
-	# Get the correct flavor of the button and led test routine (buttonledtest.py)
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/buttonledtest.py -O buttonledtest.py
-	if [ $? -ne 0 ]; then
-		echo "${RED}Download failed${SET}"
-		exit 1;
-	fi
-	# copy file to correct location
-	sudo mv buttonledtest.py /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
 	echo "${YELLOW}Downloading chatscript templates${SET}"
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-connect -O chat-connect
