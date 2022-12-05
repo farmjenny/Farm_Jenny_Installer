@@ -139,6 +139,44 @@ if [ $hardware -eq 1 ];	then
 	sudo mv farmjenny_gpio.service /lib/systemd/system/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	sudo systemctl enable farmjenny_gpio.service 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
+	# Get the correct flavor of led blinking python utility (user_led_blink_ten.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/common/user_led_blink_ten.py -O user_led_blink_ten.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv user_led_blink_ten.py /usr/local/bin/farmjenny/user_led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/user_led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of user led ON python utility (user_led_on.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/common/user_led_on.py -O user_led_on.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv user_led_on.py /usr/local/bin/farmjenny/user_led_on.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/user_led_on.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	# Get the correct flavor of user led OFF python utility (user_led_off.py)
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/common/user_led_off.py -O user_led_off.py
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
+	# copy file to correct location
+	sudo mv user_led_off.py /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	# make it executable
+	sudo chmod +x /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+
+fi
+
+# MODEM-ONLY SETUP -- SKIP IF A MODEM ISN'T INSTALLED ....
+if [ $hardware -eq 1 ] && [ $modem -ne 9 ];	then
 	# Get the correct flavor of modem startup python utility
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/modem_on.py -O modem_on.py
 	if [ $? -ne 0 ]; then
@@ -226,39 +264,6 @@ if [ $hardware -eq 1 ];	then
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/opr.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
-	# Get the correct flavor of led blinking python utility (user_led_blink_ten.py)
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/user_led_blink_ten.py -O user_led_blink_ten.py
-	if [ $? -ne 0 ]; then
-		echo "${RED}Download failed${SET}"
-		exit 1;
-	fi
-	# copy file to correct location
-	sudo mv user_led_blink_ten.py /usr/local/bin/farmjenny/user_led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/user_led_blink_ten.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-
-	# Get the correct flavor of user led ON python utility (user_led_on.py)
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/user_led_on.py -O user_led_on.py
-	if [ $? -ne 0 ]; then
-		echo "${RED}Download failed${SET}"
-		exit 1;
-	fi
-	# copy file to correct location
-	sudo mv user_led_on.py /usr/local/bin/farmjenny/user_led_on.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/user_led_on.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-
-	# Get the correct flavor of user led OFF python utility (user_led_off.py)
-	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/user_led_off.py -O user_led_off.py
-	if [ $? -ne 0 ]; then
-		echo "${RED}Download failed${SET}"
-		exit 1;
-	fi
-	# copy file to correct location
-	sudo mv user_led_off.py /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-	# make it executable
-	sudo chmod +x /usr/local/bin/farmjenny/user_led_off.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-
 	# Get the correct flavor of set modem default (set_modem_default.py)
 	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/util/${MODEM_TYPE}/set_modem_default.py -O set_modem_default.py
 	if [ $? -ne 0 ]; then
@@ -280,74 +285,76 @@ if [ $hardware -eq 1 ];	then
 	sudo mv buttonledtest.py /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 	# make it executable
 	sudo chmod +x /usr/local/bin/farmjenny/buttonledtest.py 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-fi
 
-echo "${YELLOW}Downloading chatscript templates${SET}"
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-connect -O chat-connect
+	echo "${YELLOW}Downloading chatscript templates${SET}"
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-connect -O chat-connect
 
-if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
-    exit 1; 
-fi
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1; 
+	fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-disconnect -O chat-disconnect
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/chat-disconnect -O chat-disconnect
 
-if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
-    exit 1;
-fi
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
 
-wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/provider -O provider
+	wget --no-check-certificate  https://raw.githubusercontent.com/farmjenny/Farm_Jenny_Installer/master/installer/ppp/${MODEM_TYPE}/provider -O provider
 
-if [ $? -ne 0 ]; then
-    echo "${RED}Download failed${SET}"
-    exit 1;
-fi
+	if [ $? -ne 0 ]; then
+		echo "${RED}Download failed${SET}"
+		exit 1;
+	fi
 
-echo "${YELLOW}What is your carrier's or MVNO's APN? (e.g., hologram)${SET}"
-read carrierapn 
+	echo "${YELLOW}What is your carrier's or MVNO's APN? (e.g., hologram)${SET}"
+	read carrierapn 
 
-while [ 1 ]
-do
-	echo "${YELLOW}Does your carrier need username and password? [Y/n]${SET}"
-	read usernpass
-	
-	case $usernpass in
-		[Yy]* )  while [ 1 ] 
-        do 
-        
-        echo "${YELLOW}Enter username${SET}"
-        read username
-
-        echo "${YELLOW}Enter password${SET}"
-        read password
-        sed -i "s/noauth/#noauth\nuser \"$username\"\npassword \"$password\"/" provider
-        break 
-        done
-
-        break;;
+	while [ 1 ]
+	do
+		echo "${YELLOW}Does your carrier need username and password? [Y/n]${SET}"
+		read usernpass
 		
-		[Nn]* )  break;;
-		*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
-	esac
-done
+		case $usernpass in
+			[Yy]* )  while [ 1 ] 
+			do 
+			
+			echo "${YELLOW}Enter username${SET}"
+			read username
 
-sudo rm -r /etc/chatscripts 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-sudo mkdir -p /etc/chatscripts 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-sed -i "/#EXTRA/d" chat-connect
+			echo "${YELLOW}Enter password${SET}"
+			read password
+			sed -i "s/noauth/#noauth\nuser \"$username\"\npassword \"$password\"/" provider
+			break 
+			done
 
-mv chat-connect /etc/chatscripts/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-mv chat-disconnect /etc/chatscripts/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+			break;;
+			
+			[Nn]* )  break;;
+			*)  echo "${RED}Please select one of: Y, y, N, or n${SET}";;
+		esac
+	done
 
-sudo rm -r /etc/ppp/peers 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-sudo mkdir -p /etc/ppp/peers 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-sed -i "s/#APN/$carrierapn/" provider
-mv provider /etc/ppp/peers/provider 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sudo rm -r /etc/chatscripts 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sudo mkdir -p /etc/chatscripts 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sed -i "/#EXTRA/d" chat-connect
 
-if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
-    echo "sudo route del default" >> /etc/ppp/ip-up
-    echo "sudo route add default ppp0" >> /etc/ppp/ip-up
+	mv chat-connect /etc/chatscripts/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	mv chat-disconnect /etc/chatscripts/ 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	sudo rm -r /etc/ppp/peers 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sudo mkdir -p /etc/ppp/peers 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+	sed -i "s/#APN/$carrierapn/" provider
+	mv provider /etc/ppp/peers/provider 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
+
+	if ! (grep -q 'sudo route' /etc/ppp/ip-up ); then
+		echo "sudo route del default" >> /etc/ppp/ip-up
+		echo "sudo route add default ppp0" >> /etc/ppp/ip-up
+	fi
 fi
+
+# END OF MODEM-ONLY CONFIG
 
 if [ $hardware -eq 1 ];	then
 	echo "${YELLOW}Your HAT can operate as a Thread Border Router.  Install OTBR? (WARNING: this will take awhile) [Y/n]${SET}"

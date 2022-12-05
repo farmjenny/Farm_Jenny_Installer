@@ -18,8 +18,10 @@ For step-by-step instructions, please follow the [Quick Start Guide for the Farm
 
 4.  Enjoy your Farm Jenny device!
 ## What this script does:
-1.  If your device includes a cellular modem, it installs the PPP dialer and configures the scripts (called "chatscripts") that the dialer uses to "talk" to the specific cellular modem.  If your carrier requires certain credentials to connect, these are inserted at the right places.
-2.  If your device is a Raspberry Pi HAT, it installs the Farm Jenny HAT Library, which allows you to interact with the device through a simpler API.
-3.  If your device can act as a Thread Border Router, it installs the OpenThread Border Router
-4.  It installs a service that run at startup which configure the gpio lines needed to control the modem and use the button and LED on the HAT
-5.  It installs a service that runs at powerdown or reboot to gracefully disconnect from the cellular network, helping you avoid the wrath of cellular providers who hate to see their towers ghosted by end devices.
+1.  If your device is a Raspberry Pi HAT, it installs the Farm Jenny HAT Library, which allows you to interact with the device through a simpler API.
+2.  If your device can act as a Thread Border Router, it offers to install the OpenThread Border Router
+3.  It installs a service that run at startup which configure the gpio lines needed to control the modem and use the button and LED on the HAT
+
+## If you specify a cellular modem (when prompted), this script additionally:
+1.  Installs the PPP dialer and configures the scripts (called "chatscripts") that the dialer uses to "talk" to the specific cellular modem.  If your carrier requires certain credentials to connect, these are inserted at the right places.
+2.  Installs a service that runs at powerdown or reboot to gracefully disconnect from the cellular network, helping you avoid the wrath of cellular providers who hate to see their towers ghosted by end devices.
