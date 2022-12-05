@@ -16,7 +16,7 @@ MODEM_TYPE="NONE"
 
 # Bootstrapping ----------------------------------------------------------------
 echo "${YELLOW}Preparing for installation${SET}" 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
-sudo apt-get --assume-yes update
+sudo apt-get --assume-yes --allow-releaseinfo-change update
 sudo apt-get --assume-yes upgrade
 sudo apt-get --assume-yes install git python3-setuptools python3-pip python3-RPi.GPIO ppp screen 2>&1 | tee -a /home/pi/farmjenny/logs/install.log
 
